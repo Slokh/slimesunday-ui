@@ -102,6 +102,8 @@ const Home: NextPage = () => {
   } = useEditor();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const displayLayers = [...activeLayers].reverse();
+
   return (
     <Flex
       minH="100vh"
@@ -163,7 +165,7 @@ const Home: NextPage = () => {
       <Flex flexGrow={1}>
         <Flex flexGrow={1} justify="center" align="center">
           <Box position="relative" w="500px" h="625px" bgColor="primary.100">
-            {activeLayers.map((layer: any, i) => (
+            {displayLayers.map((layer: any, i) => (
               <Image
                 position="absolute"
                 key={i}
