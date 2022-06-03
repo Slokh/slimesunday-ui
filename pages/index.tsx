@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spacer,
   Stack,
   Text,
   useDisclosure,
@@ -235,6 +236,17 @@ const Home: NextPage = () => {
               </Stack>
             </Flex>
           ))}
+          <Spacer />
+          <Flex align="center" justify="center" pb={2}>
+            <Image
+              boxSize={6}
+              src="https://opensea.io/static/images/logos/opensea.svg"
+              mr={2}
+            />
+            <Text fontSize="sm" fontWeight="semibold" color="primary.200">
+              Powered by OpenSea
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
