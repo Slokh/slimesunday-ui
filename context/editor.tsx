@@ -52,7 +52,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   };
 
   const activateLayer = (layer: any) => {
-    setActiveLayers([...activeLayers, layer]);
+    setActiveLayers([layer, ...activeLayers]);
   };
 
   const deactivateLayer = (layer: any) => {
