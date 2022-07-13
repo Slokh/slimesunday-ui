@@ -1,4 +1,4 @@
-export const files = [
+export const layerFiles = [
   "Ripped_paper.png",
   "Anatomy_grid.png",
   "Article_1.png",
@@ -8,12 +8,6 @@ export const files = [
   "ephemera_clippings.png",
   "Folded_Paper.png",
   "Form_Mag.png",
-  "Genetic_charts.jpg",
-  "Handmade_1.jpg",
-  "Handmade_2.png",
-  "Handmade_3.png",
-  "Handmade_4.jpg",
-  "Lincoln.jpg",
   "Not_Monday.png",
   "Pump&dump.png",
   "Puzzle_1.png",
@@ -26,4 +20,13 @@ export const files = [
   "Sticker_4.png",
   "Test_Portrait.png",
   "Wrinkled_Paper.png",
+];
+
+export const backgroundFiles = [
+  "Genetic_charts.jpg",
+  "Handmade_1.jpg",
+  "Handmade_2.png",
+  "Handmade_3.png",
+  "Handmade_4.jpg",
+  "Lincoln.jpg",
 ];

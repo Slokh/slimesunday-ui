@@ -1,12 +1,11 @@
 import { Web3Provider } from "@ethersproject/providers";
-import { files } from "@slimesunday/utils";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { backgroundFiles, layerFiles } from "@slimesunday/utils";
+import { createContext, ReactNode, useContext, useState } from "react";
+
+export type Layer = {
+  name: string;
+  image: string;
+};
 
 type State = {
   provider: Web3Provider;
@@ -15,13 +14,18 @@ type State = {
   name: string | undefined;
   active: boolean;
   connect: () => void;
-  layers: any[];
-  activeLayers: any[];
-  inactiveLayers: any[];
-  activateLayer: (layer: any) => void;
-  deactivateLayer: (layer: any) => void;
-  incrementLayer: (layer: any) => void;
-  decrementLayer: (layer: any) => void;
+
+  backgrounds: Layer[];
+  activeBackground?: Layer;
+  setBackground: (layer: Layer) => void;
+
+  layers: Layer[];
+  activeLayers: Layer[];
+  inactiveLayers: Layer[];
+
+  activateLayer: (layer: Layer) => void;
+  deactivateLayer: (layer: Layer) => void;
+  setActiveLayers: any;
 };
 
 type EditorContextType = State | undefined;
@@ -33,11 +37,17 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const [provider, setProvider] = useState<any>();
   const [account, setAccount] = useState<string>();
   const [name, setName] = useState<string | undefined>();
+  const [activeBackground, setBackground] = useState<Layer>();
   const [activeLayers, setActiveLayers] = useState<any[]>([]);
 
-  const layers = files.map((file) => ({
+  const layers = layerFiles.map((file) => ({
     name: file,
     image: `/layers/${file}`,
+  }));
+
+  const backgrounds = backgroundFiles.map((file) => ({
+    name: file,
+    image: `/backgrounds/${file}`,
   }));
 
   const connect = async () => {
@@ -59,26 +69,6 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     setActiveLayers(activeLayers.filter((l) => l !== layer));
   };
 
-  const decrementLayer = (layer: any) => {
-    const index = activeLayers.indexOf(layer);
-    const newIndex = index + 1;
-
-    const newActiveLayers = [...activeLayers];
-    newActiveLayers[index] = activeLayers[newIndex];
-    newActiveLayers[newIndex] = layer;
-    setActiveLayers(newActiveLayers);
-  };
-
-  const incrementLayer = (layer: any) => {
-    const index = activeLayers.indexOf(layer);
-    const newIndex = index - 1;
-
-    const newActiveLayers = [...activeLayers];
-    newActiveLayers[index] = activeLayers[newIndex];
-    newActiveLayers[newIndex] = layer;
-    setActiveLayers(newActiveLayers);
-  };
-
   return (
     <EditorContext.Provider
       value={{
@@ -88,6 +78,9 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         name,
         active: !!account,
         connect,
+        backgrounds,
+        activeBackground,
+        setBackground,
         layers,
         activeLayers,
         inactiveLayers: layers.filter(
@@ -95,8 +88,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         ),
         activateLayer,
         deactivateLayer,
-        incrementLayer,
-        decrementLayer,
+        setActiveLayers,
       }}
     >
       {children}

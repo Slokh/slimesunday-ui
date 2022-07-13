@@ -12,16 +12,20 @@ import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import "@fontsource/inter/800.css";
 import "@fontsource/inter/900.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <ChakraProvider theme={theme}>
-      <Head>
-        <title>SlimeSunday</title>
-      </Head>
-      <EditorProvider>
-        <Component {...pageProps} />
-      </EditorProvider>
+      <DndProvider backend={HTML5Backend}>
+        <Head>
+          <title>SlimeSunday</title>
+        </Head>
+        <EditorProvider>
+          <Component {...pageProps} />
+        </EditorProvider>
+      </DndProvider>
     </ChakraProvider>
   );
 };
