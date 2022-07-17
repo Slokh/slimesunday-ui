@@ -1,7 +1,7 @@
-import { Box, Flex, Icon, Image, Spacer, Stack, Text } from "@chakra-ui/react";
-import { useEditor } from "@slimesunday/context/editor";
-import { BsCheckLg, BsQuestionLg } from "react-icons/bs";
-import { MdLogin } from "react-icons/md";
+import { Box, Flex, Icon, Image, Stack, Text } from "@chakra-ui/react";
+import { useState } from "react";
+import { ConnectButton } from "./ConnectButton";
+import { Editor } from "./Editor";
 
 export const MacButtons = (props: any) => (
   <Stack direction="row" spacing={2} {...props}>
@@ -11,16 +11,20 @@ export const MacButtons = (props: any) => (
   </Stack>
 );
 
-const OpenSeaLogo = () => (
-  <Flex position="absolute" right={0} pr={4}>
-    <Image
-      src="https://opensea.io/static/images/logos/opensea.svg"
-      alt="opensea"
-      w={4}
-      h={4}
-    />
-  </Flex>
-);
+export const OpenSeaLogo = (props: any) => {
+  const { boxSize, ...rest } = props;
+
+  return (
+    <Flex {...rest}>
+      <Image
+        src="https://opensea.io/static/images/logos/opensea.svg"
+        alt="opensea"
+        w={boxSize}
+        h={boxSize}
+      />
+    </Flex>
+  );
+};
 
 export const MenuButton = ({
   icon,
@@ -50,54 +54,67 @@ export const MenuButton = ({
   </Stack>
 );
 
-const MenuDivider = () => (
-  <Flex borderRightWidth={1} borderColor="primary.700" w={1} h={4} />
-);
-
 export const Menu = () => {
-  const {
-    wallet: { active, connect, account, name },
-  } = useEditor();
+  return (
+    <Flex
+      h={7}
+      w="full"
+      bgColor="primary.500"
+      justify="center"
+      align="center"
+      borderBottomWidth={1}
+      borderBottomColor="primary.700"
+      fontWeight="semibold"
+      color="primary.100"
+    >
+      <MacButtons position="absolute" left={0} pl={4} />
+      <Text>Scrapbook</Text>
+      <OpenSeaLogo position="absolute" right={0} pr={4} boxSize={4} />
+    </Flex>
+  );
+};
+
+enum SidebarOption {
+  Editor = "Editor",
+  Wallet = "Wallet",
+}
+
+export const Sidebar = () => {
+  const [selected, setSelected] = useState<SidebarOption>(SidebarOption.Editor);
 
   return (
-    <Flex direction="column">
+    <Flex direction="column" w={96} bgColor="primary.500" userSelect="none">
+      <ConnectButton />
       <Flex
-        h={7}
         w="full"
-        bgColor="primary.500"
-        justify="center"
+        bgColor="primary.600"
+        h={10}
         align="center"
-        borderBottomWidth={1}
-        borderBottomColor="primary.700"
-        fontWeight="semibold"
-        color="primary.100"
+        borderTopWidth={1}
+        borderColor="primary.600"
       >
-        <MacButtons position="absolute" left={0} pl={4} />
-        <Text>Slimeshop</Text>
-        <OpenSeaLogo />
+        {Object.values(SidebarOption).map((item) => (
+          <Flex
+            key={item}
+            bgColor={item == selected ? "primary.500" : "primary.600"}
+            h="full"
+            w={16}
+            justify="center"
+            align="center"
+            fontSize="xs"
+            fontWeight="semibold"
+            color="primary.200"
+            borderColor="primary.700"
+            borderRightWidth={1}
+            cursor="pointer"
+            onClick={() => setSelected(item)}
+          >
+            {item}
+          </Flex>
+        ))}
       </Flex>
-      <Stack
-        w="full"
-        bgColor="primary.500"
-        borderColor="primary.700"
-        align="center"
-        direction="row"
-        borderBottomWidth={1}
-        p={1}
-        borderBottomColor="primary.700"
-        spacing={2}
-      >
-        <MenuButton
-          icon={MdLogin}
-          text={active ? name || account : "Connect Wallet"}
-          onClick={connect}
-        />
-        <Spacer />
-        <MenuDivider />
-        <MenuButton icon={BsQuestionLg} text="FAQ" />
-        <MenuDivider />
-        <MenuButton icon={BsCheckLg} text="Submit" isDisabled={!active} />
-      </Stack>
+      {selected === SidebarOption.Editor && <Editor />}
+      {selected === SidebarOption.Wallet && <div>Wallet todo</div>}
     </Flex>
   );
 };

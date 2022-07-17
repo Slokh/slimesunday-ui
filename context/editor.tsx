@@ -1,22 +1,20 @@
-import { Web3Provider } from "@ethersproject/providers";
 import { metadata } from "@slimesunday/utils";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 export type Layer = {
   name: string;
-  image: string;
+  image?: string;
+  isDisabled?: boolean;
 };
 
-type State = {
-  wallet: {
-    provider: Web3Provider;
-    signer: any;
-    account: string | undefined;
-    name: string | undefined;
-    active: boolean;
-    connect: () => void;
-  };
+export enum EditorMode {
+  Background,
+  Portrait,
+  Layers,
+  Mintable,
+}
 
+type State = {
   available: {
     backgrounds: Layer[];
     portraits: Layer[];
@@ -29,11 +27,15 @@ type State = {
     layers: Layer[];
   };
 
+  randomize: () => void;
   setBackground: (layer: Layer) => void;
   setPortrait: (layer: Layer) => void;
   setLayers: (layers: Layer[]) => void;
   addLayer: (layer: Layer) => void;
   removeLayer: (layer: Layer) => void;
+
+  isPortraitsEnabled: boolean;
+  isLayersEnabled: boolean;
 };
 
 type EditorContextType = State | undefined;
@@ -42,9 +44,6 @@ type EditorProviderProps = { children: ReactNode };
 const EditorContext = createContext<EditorContextType>(undefined);
 
 export const EditorProvider = ({ children }: EditorProviderProps) => {
-  const [provider, setProvider] = useState<any>();
-  const [account, setAccount] = useState<string>();
-  const [name, setName] = useState<string | undefined>();
   const [activeBackground, setBackground] = useState<Layer>();
   const [activePortrait, setPortrait] = useState<Layer>();
   const [activeLayers, setLayers] = useState<any[]>([]);
@@ -59,44 +58,54 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const portraits = loadAvailable("portraits");
   const layers = loadAvailable("layers");
 
-  const connect = async () => {
-    // @ts-ignore
-    const provider = new Web3Provider(window.ethereum, "any");
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const account = await signer.getAddress();
-    setProvider(signer);
-    setAccount(account);
-    setName((await signer.provider.lookupAddress(account)) || undefined);
+  const randomize = () => {
+    const getRandomElements = (arr: Layer[], n: number) =>
+      arr.sort(() => 0.5 - Math.random()).slice(0, n);
+
+    setBackground(getRandomElements(backgrounds, 1)[0]);
+    setPortrait(getRandomElements(portraits, 1)[0]);
+    setLayers(getRandomElements(layers, 5));
   };
 
   return (
     <EditorContext.Provider
       value={{
-        wallet: {
-          provider: provider?.provider,
-          signer: provider,
-          account,
-          name,
-          active: !!account,
-          connect,
-        },
         available: {
-          backgrounds,
-          portraits,
-          layers,
+          backgrounds: backgrounds.map((item) =>
+            activeBackground?.name == item.name
+              ? { ...item, isDisabled: true }
+              : item
+          ),
+          portraits: portraits.map((item) =>
+            activePortrait?.name == item.name
+              ? { ...item, isDisabled: true }
+              : item
+          ),
+          layers: layers.map((item) =>
+            activeLayers
+              .map((activeItem) => activeItem.name)
+              .includes(item.name)
+              ? { ...item, isDisabled: true }
+              : item
+          ),
         },
+
         active: {
           background: activeBackground,
           portrait: activePortrait,
           layers: activeLayers,
         },
+
+        randomize,
         setBackground,
         setPortrait,
         setLayers,
         addLayer: (layer: any) => setLayers([layer, ...activeLayers]),
         removeLayer: (layer: any) =>
           setLayers(activeLayers.filter((l) => l !== layer)),
+
+        isPortraitsEnabled: !!activeBackground,
+        isLayersEnabled: !!activeBackground && !!activePortrait,
       }}
     >
       {children}
