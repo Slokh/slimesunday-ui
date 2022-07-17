@@ -31,15 +31,17 @@ const DisplayEmpty = () => {
 };
 
 const DisplayLayers = () => {
-  const { activeBackground, activeLayers } = useEditor();
+  const {
+    active: { background, layers },
+  } = useEditor();
 
-  const displayLayers = [...activeLayers].reverse();
+  const displayLayers = [...layers].reverse();
 
   return (
     <Box position="relative" w="500px" h="625px" bgColor="primary.100">
-      {activeBackground && (
+      {background && (
         <Box position="absolute">
-          <Image src={activeBackground.image} alt={activeBackground.name} />
+          <Image src={background.image} alt={background.name} />
         </Box>
       )}
       {displayLayers.map((layer: any, i) => (
@@ -52,11 +54,13 @@ const DisplayLayers = () => {
 };
 
 export const Display = () => {
-  const { activeBackground } = useEditor();
+  const {
+    active: { background },
+  } = useEditor();
 
   return (
     <Flex flexGrow={1} justify="center" align="center">
-      {activeBackground ? <DisplayLayers /> : <DisplayEmpty />}
+      {background ? <DisplayLayers /> : <DisplayEmpty />}
     </Flex>
   );
 };

@@ -55,7 +55,9 @@ const MenuDivider = () => (
 );
 
 export const Menu = () => {
-  const { active, connect, account, name } = useEditor();
+  const {
+    wallet: { active, connect, account, name },
+  } = useEditor();
 
   return (
     <Flex direction="column">

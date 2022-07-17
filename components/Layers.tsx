@@ -83,18 +83,25 @@ const Background = ({ background }: { background: Layer }) => {
 };
 
 export const Layers = () => {
-  const { activeBackground, activeLayers, setActiveLayers } = useEditor();
+  const {
+    active: { background, layers },
+    setLayers,
+  } = useEditor();
 
-  const moveLayer = useCallback((dragIndex: number, hoverIndex: number) => {
-    setActiveLayers((prevLayers: Layer[]) =>
-      update(prevLayers, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, prevLayers[dragIndex] as Layer],
-        ],
-      })
-    );
-  }, []);
+  const moveLayer = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      // @ts-ignore
+      setLayers((prevLayers: Layer[]) =>
+        update(prevLayers, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, prevLayers[dragIndex] as Layer],
+          ],
+        })
+      );
+    },
+    [setLayers]
+  );
 
   const renderLayer = useCallback(
     (layer: { name: string; image: string }, index: number) => {
@@ -108,14 +115,14 @@ export const Layers = () => {
         />
       );
     },
-    []
+    [moveLayer]
   );
 
   return (
     <Flex direction="column" w={96} bgColor="primary.500" userSelect="none">
-      <LayersHeader isActive={!!activeBackground} />
-      {activeLayers.map((layer: any, i) => renderLayer(layer, i))}
-      {activeBackground && <Background background={activeBackground} />}
+      <LayersHeader isActive={!!background} />
+      {layers.map((layer: any, i) => renderLayer(layer, i))}
+      {background && <Background background={background} />}
     </Flex>
   );
 };
@@ -209,7 +216,7 @@ const DraggableLayer = ({ id, index, moveLayer, layer }: any) => {
 };
 
 const Layer = ({ layer }: { layer: Layer }) => {
-  const { deactivateLayer } = useEditor();
+  const { removeLayer } = useEditor();
 
   return (
     <Flex
@@ -231,7 +238,7 @@ const Layer = ({ layer }: { layer: Layer }) => {
         </Text>
       </Stack>
       <Stack direction="row" spacing={0}>
-        <LayerButton icon={BsX} onClick={() => deactivateLayer(layer)} />
+        <LayerButton icon={BsX} onClick={() => removeLayer(layer)} />
       </Stack>
     </Flex>
   );

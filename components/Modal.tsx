@@ -1,13 +1,10 @@
 import {
-  Box,
   Flex,
   Icon,
   Image,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
   Spacer,
   Stack,
@@ -16,7 +13,7 @@ import {
 import { Layer, useEditor } from "@slimesunday/context/editor";
 import { useEffect, useState } from "react";
 import { BsImage, BsLayers, BsPaintBucket, BsShop } from "react-icons/bs";
-import { MacButtons, MenuButton } from "./Menu";
+import { MacButtons } from "./Menu";
 
 export const GenericModal = ({ isOpen, onClose, children }: any) => {
   return (
@@ -147,21 +144,24 @@ export const ModalRouter = ({ isOpen, onClose, activeModal }: any) => {
 
 const LayersContent = ({ onClose }: { onClose: any }) => {
   const [selectedLayer, setSelectedLayer] = useState<Layer>();
-  const { inactiveLayers, activateLayer } = useEditor();
+  const {
+    available: { layers },
+    addLayer,
+  } = useEditor();
 
   useEffect(() => {
-    if (inactiveLayers?.length) {
-      setSelectedLayer(inactiveLayers[0]);
+    if (layers?.length) {
+      setSelectedLayer(layers[0]);
     }
-  }, [inactiveLayers]);
+  }, [layers]);
 
   return (
     <ImageContent
-      files={inactiveLayers}
+      files={layers}
       selectedFile={selectedLayer}
       onClick={setSelectedLayer}
       onDoubleClick={(background: Layer) => {
-        activateLayer(background);
+        addLayer(background);
         onClose();
       }}
     />
@@ -170,7 +170,10 @@ const LayersContent = ({ onClose }: { onClose: any }) => {
 
 const BackgroundsContent = ({ onClose }: { onClose: any }) => {
   const [selectedBackground, setSelectedBackground] = useState<Layer>();
-  const { backgrounds, setBackground } = useEditor();
+  const {
+    available: { backgrounds },
+    setBackground,
+  } = useEditor();
 
   useEffect(() => {
     if (backgrounds?.length) {
