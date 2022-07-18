@@ -38,9 +38,9 @@ export const ConnectButton = () => {
                     fontWeight="bold"
                     fontSize="md"
                     transition="all 0.2s ease"
-                    _hover={{ bgColor: "hover" }}
+                    _hover={{ bgColor: "primarydark" }}
                   >
-                    Connect a wallet
+                    CONNECT A WALLET
                   </Flex>
                 );
               }
@@ -56,7 +56,7 @@ export const ConnectButton = () => {
                     fontWeight="bold"
                     fontSize="md"
                     transition="all 0.2s ease"
-                    _hover={{ bgColor: "primary.300" }}
+                    _hover={{ bgColor: "primarydark" }}
                   >
                     Switch network
                   </Flex>
@@ -65,7 +65,7 @@ export const ConnectButton = () => {
               return (
                 <Row>
                   <Text fontWeight="semibold" fontSize="sm" pl={2}>
-                    {account.displayName}
+                    {account.displayName.toUpperCase()}
                   </Text>
                   <Stack direction="row" spacing={0}>
                     <RowButton icon={BsPersonFill} onClick={openAccountModal} />

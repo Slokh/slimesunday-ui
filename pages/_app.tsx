@@ -1,11 +1,11 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import "@fontsource/bungee";
 import { EditorProvider } from "@slimesunday/context/editor";
 import theme from "@slimesunday/theme";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import "public/fonts/style.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";

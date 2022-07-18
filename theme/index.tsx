@@ -2,40 +2,22 @@ import { extendTheme } from "@chakra-ui/react";
 
 const theme = extendTheme({
   colors: {
-    primary: {
-      0: "#FFFFFF",
-      100: "#CAF768",
-      200: "#6FDA82",
-      300: "#00B894",
-      400: "#009294",
-      500: "#0F6C7E",
-      600: "#2F4858",
-      700: "#000000",
-    },
-    selected: "#CAF768",
-    unselected: "#6FDA82",
-    hover: "#6FDA82",
-    disabled: "#00B894",
-    darkHover: "#00B894",
+    white: "#FFFFFF",
+    primary: "#A7E036",
+    primarydark: "#89C217",
+    secondary: "#1D1D1D",
+    tertiary: "#C6C6C4",
+    black: "#000000",
   },
   fonts: {
-    body: "Bungee",
+    body: "Retro Gaming",
   },
   components: {
     Text: {
       baseStyle: {
-        color: "primary.700",
+        color: "secondary",
         fontWeight: "medium",
         fontSize: "sm",
-      },
-    },
-    Flex: {
-      variants: {
-        disabled: {
-          color: "primary.300",
-          bgColor: "primary.200",
-          cursor: "default",
-        },
       },
     },
   },

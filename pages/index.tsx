@@ -5,7 +5,7 @@ import { Menu, Sidebar } from "@slimesunday/components/Menu";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => (
-  <Flex minH="100vh" w="full" bgColor="primary.100" direction="column">
+  <Flex minH="100vh" w="full" bgColor="primary" direction="column">
     <Menu />
     <Flex flexGrow={1}>
       <Display />

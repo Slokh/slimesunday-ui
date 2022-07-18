@@ -26,7 +26,7 @@ export const RowButton = ({
   return (
     <Flex
       onClick={isDisabled ? () => {} : onClick}
-      color={isDisabled ? "primary.300" : "primary.600"}
+      color={isDisabled ? "primarydark" : "secondary"}
       borderRadius={8}
       w={7}
       h={7}
@@ -34,7 +34,7 @@ export const RowButton = ({
       cursor="pointer"
       align="center"
       justify="center"
-      _hover={isDisabled ? {} : { bgColor: "primary.200" }}
+      _hover={isDisabled ? {} : { bgColor: "primarydark" }}
     >
       <Icon as={icon} boxSize={boxSize || 5} />
     </Flex>
@@ -53,7 +53,6 @@ export const Row = ({
     h={16}
     align="center"
     justify="space-between"
-    p={2}
     cursor={isDraggable ? "move" : "default"}
   >
     {children}
@@ -71,7 +70,7 @@ export const DefaultRow = ({
 }) => {
   const props = isDisabled
     ? {
-        color: "disabled",
+        color: "primarydark",
       }
     : {
         cursor: "pointer",
@@ -80,19 +79,18 @@ export const DefaultRow = ({
   return (
     <Row>
       <Flex
-        borderRadius={16}
         w="full"
         h="full"
         justify="center"
         align="center"
-        bgColor="primary.200"
+        bgColor="primary"
         transition="all 0.2s ease"
         onClick={isDisabled ? () => {} : onClick}
         _hover={
           isDisabled
             ? {}
             : {
-                bgColor: "darkHover",
+                bgColor: "primarydark",
               }
         }
         {...props}
@@ -166,15 +164,15 @@ export const EditorRow = ({
 
   return (
     <Row isDraggable={isDraggable}>
-      <Stack direction="row" align="center">
-        <Box boxSize={8}>
+      <Stack direction="row" align="center" pl={2}>
+        <Box w={8} bgColor="secondary">
           <Image src={layer.image} alt={layer.name} />
         </Box>
         <Text fontWeight="semibold" fontSize="sm" pl={2}>
           {layer.name}
         </Text>
       </Stack>
-      <Stack direction="row" spacing={0}>
+      <Stack direction="row" spacing={0} pr={2}>
         {actions.map((action, i) => {
           const { icon, onClick } = options[action];
 

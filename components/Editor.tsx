@@ -23,17 +23,15 @@ const EditorStep = ({
   isDisabled?: boolean;
   children?: React.ReactNode;
 }) => (
-  <Flex direction="column">
+  <Flex direction="column" borderBottomWidth={1} borderColor="secondary">
     <Text
       pl={2}
-      color="primary.300"
       fontWeight="bold"
       fontSize="xs"
       textTransform="uppercase"
       as="span"
     >
-      {`#${number} - `}
-      <chakra.span color="primary.500">{title}</chakra.span>
+      {`Step ${number} - ${title}`}
     </Text>
     {!showPlaceholder && children}
     {(showPlaceholder || alwaysShowPlaceholder) && placeholder}
@@ -64,7 +62,7 @@ export const Editor = () => {
         direction="column"
         h="calc(100vh - 220px)"
         overflowY="scroll"
-        spacing={6}
+        spacing={4}
       >
         <EditorStep
           number={1}
@@ -74,7 +72,7 @@ export const Editor = () => {
               modalType={ModalType.Backgrounds}
               isDisabled={!isStep1Active}
             >
-              Add a background
+              ADD A BACKGROUND
             </ModalRow>
           }
           showPlaceholder={!background}
@@ -93,7 +91,7 @@ export const Editor = () => {
               modalType={ModalType.Portraits}
               isDisabled={!isStep2Active}
             >
-              Add a portrait
+              ADD A PORTRAIT
             </ModalRow>
           }
           showPlaceholder={!portrait}
@@ -109,7 +107,7 @@ export const Editor = () => {
           title="Layers"
           placeholder={
             <ModalRow modalType={ModalType.Layers} isDisabled={!isStep3Active}>
-              Add a layer
+              ADD A LAYER
             </ModalRow>
           }
           alwaysShowPlaceholder
@@ -119,9 +117,9 @@ export const Editor = () => {
       </Stack>
       <Stack direction="row" w="full" spacing={0}>
         <DefaultRow onClick={randomize} isDisabled={!isActive}>
-          Randomize
+          RANDOMIZE
         </DefaultRow>
-        <DefaultRow isDisabled={!isMintActive}>Mint</DefaultRow>
+        <DefaultRow isDisabled={!isMintActive}>MINT</DefaultRow>
       </Stack>
     </Flex>
   );

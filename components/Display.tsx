@@ -9,39 +9,28 @@ export const Display = () => {
   const displayLayers = [...layers].reverse();
 
   return (
-    <Flex flexGrow={1} justify="center" align="center" bgColor="primary.600">
-      <Flex position="relative" w="xl" justify="center" align="center">
+    <Flex flexGrow={1} justify="center" align="center" bgColor="secondary">
+      <Flex
+        position="relative"
+        w="500px"
+        h="625px"
+        justify="center"
+        align="center"
+        bgColor="tertiary"
+      >
         {background && (
           <Box position="absolute">
-            <Image
-              src={background.image}
-              alt={background.name}
-              h="100%"
-              w="100%"
-              objectFit="contain"
-            />
+            <Image src={background.image} alt={background.name} />
           </Box>
         )}
         {portrait && (
           <Box position="absolute">
-            <Image
-              src={portrait.image}
-              alt={portrait.name}
-              h="100%"
-              w="100%"
-              objectFit="contain"
-            />
+            <Image src={portrait.image} alt={portrait.name} />
           </Box>
         )}
         {displayLayers.map((layer: any, i) => (
           <Box key={i} position="absolute">
-            <Image
-              src={layer.image}
-              alt={layer.name}
-              h="100%"
-              w="100%"
-              objectFit="contain"
-            />
+            <Image src={layer.image} alt={layer.name} />
           </Box>
         ))}
       </Flex>

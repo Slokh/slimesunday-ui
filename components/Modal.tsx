@@ -41,15 +41,12 @@ const ModalOption = ({
     <Icon
       as={icon}
       boxSize={4}
-      color={
-        isDisabled ? "primary.200" : isActive ? "primary.700" : "primary.400"
-      }
+      color={isDisabled ? "primarydark" : "secondary"}
     />
     <Text
+      color={isDisabled ? "primarydark" : "secondary"}
       pl={1}
-      color={
-        isDisabled ? "primary.200" : isActive ? "primary.700" : "primary.400"
-      }
+      fontWeight={isActive ? "bold" : "medium"}
     >
       {text}
     </Text>
@@ -120,11 +117,11 @@ export const ModalRouter = ({
         <ModalBody p={0} m={0}>
           <Flex cursor="default" userSelect="none">
             <Stack
-              bgColor="primary.100"
+              bgColor="primary"
               w="full"
               borderTopLeftRadius={8}
               borderBottomLeftRadius={8}
-              borderRightColor="primary.600"
+              borderRightColor="secondary"
               borderRightWidth={1}
               fontWeight="medium"
               fontSize="sm"
@@ -137,7 +134,7 @@ export const ModalRouter = ({
                   <ModalOption key={i} {...option} />
                 ))}
               </Stack>
-              <Divider borderColor="primary.300" />
+              <Divider borderColor="secondary" />
               <Stack>
                 {secondaryOptionGroup.map((option, i) => (
                   <ModalOption key={i} {...option} />
@@ -147,11 +144,11 @@ export const ModalRouter = ({
             <Flex w="full" direction="column">
               <Stack
                 direction="row"
-                bgColor="primary.100"
+                bgColor="primary"
                 w="full"
                 align="center"
                 borderTopRightRadius={8}
-                borderBottomColor="primary.600"
+                borderBottomColor="secondary"
                 borderBottomWidth={1}
                 p={4}
               >

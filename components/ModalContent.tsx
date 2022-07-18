@@ -67,9 +67,9 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
     <Flex
       maxH="inherit"
       direction="column"
-      bgColor="primary.100"
+      bgColor="primary"
       w={80}
-      borderRightColor="primary.600"
+      borderRightColor="secondary"
       borderRightWidth={1}
       fontSize="sm"
       overflowY="scroll"
@@ -79,9 +79,9 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
           key={i}
           bgColor={
             layer === selectedFile
-              ? "primary.400"
+              ? "tertiary"
               : i % 2 === 0
-              ? "primary.200"
+              ? "primarydark"
               : ""
           }
           onClick={() => onClick(layer)}
@@ -91,13 +91,14 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
           p={0.5}
           pl={2}
         >
-          <Image src={layer.image} h={4} w="auto" alt={layer.name} />
           <Text
             pl={2}
             color={
               layer.isDisabled && layer !== selectedFile
-                ? "primary.300"
-                : "primary.700"
+                ? i % 2 === 0
+                  ? "primary"
+                  : "primarydark"
+                : "secondary"
             }
           >
             {layer.name}
@@ -107,7 +108,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
     </Flex>
     <Flex
       direction="column"
-      bgColor="primary.600"
+      bgColor="secondary"
       justify="center"
       align="center"
       w={72}
@@ -120,8 +121,8 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
             borderRadius={16}
             justify="center"
             align="center"
-            bgColor="primary.200"
-            color={selectedFile.isDisabled ? "disabled" : ""}
+            bgColor="primary"
+            color={selectedFile.isDisabled ? "primarydark" : ""}
             cursor={selectedFile.isDisabled ? "default" : "pointer"}
             fontSize="sm"
             fontWeight="semibold"
@@ -135,7 +136,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
               selectedFile.isDisabled
                 ? {}
                 : {
-                    bgColor: "primary.400",
+                    bgColor: "primarydark",
                   }
             }
           >

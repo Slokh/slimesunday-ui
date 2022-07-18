@@ -5,9 +5,9 @@ import { Editor } from "./Editor";
 
 export const MacButtons = (props: any) => (
   <Stack direction="row" spacing={2} {...props}>
-    <Box w={3} h={3} borderRadius={64} bgColor="primary.600" />
-    <Box w={3} h={3} borderRadius={64} bgColor="primary.500" />
-    <Box w={3} h={3} borderRadius={64} bgColor="primary.400" />
+    <Box w={3} h={3} borderRadius={64} bgColor="#FF3B5E" />
+    <Box w={3} h={3} borderRadius={64} bgColor="#3C3FFF" />
+    <Box w={3} h={3} borderRadius={64} bgColor="#9F3BFF" />
   </Stack>
 );
 
@@ -34,11 +34,11 @@ export const Menu = () => {
       justify="center"
       align="center"
       borderBottomWidth={1}
-      borderColor="primary.600"
+      borderColor="secondary"
       fontWeight="semibold"
     >
       <MacButtons position="absolute" left={0} pl={4} />
-      <Text>Scrapbook</Text>
+      <Text fontWeight="bold">SCRAPBOOK</Text>
       <OpenSeaLogo position="absolute" right={0} pr={4} boxSize={4} />
     </Flex>
   );
@@ -57,25 +57,25 @@ export const Sidebar = () => {
       <ConnectButton />
       <Flex
         w="full"
-        bgColor="primary.600"
+        bgColor="secondary"
         h={10}
         align="center"
         borderTopWidth={1}
-        borderColor="primary.600"
+        borderColor="secondary"
       >
         {Object.values(SidebarOption).map((item) => (
           <Flex
             key={item}
-            bgColor={item == selected ? "selected" : "unselected"}
+            bgColor={item == selected ? "primary" : "secondary"}
+            color={item == selected ? "secondary" : "tertiary"}
             h="full"
             w={16}
             justify="center"
             align="center"
             fontSize="xs"
             fontWeight="semibold"
-            borderColor="primary.600"
+            borderColor="secondary"
             borderRightWidth={1}
-            borderBottomWidth={item == selected ? 0 : 1}
             cursor="pointer"
             onClick={() => setSelected(item)}
             _hover={{ bgColor: "selected" }}
