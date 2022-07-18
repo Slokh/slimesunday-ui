@@ -51,7 +51,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const loadAvailable = (key: string) =>
     metadata[key]?.map((file) => ({
       name: file,
-      image: `/${key}/${file}`,
+      image: `https://opensea-slimesunday.s3.amazonaws.com/${key}/${file}`,
     }));
 
   const backgrounds = loadAvailable("backgrounds");

@@ -29,7 +29,7 @@ export const OpenSeaLogo = (props: any) => {
 export const Menu = () => {
   return (
     <Flex
-      h={7}
+      h={8}
       w="full"
       justify="center"
       align="center"
@@ -53,7 +53,7 @@ export const Sidebar = () => {
   const [selected, setSelected] = useState<SidebarOption>(SidebarOption.Editor);
 
   return (
-    <Flex direction="column" w={96} userSelect="none">
+    <Flex direction="column" h="full" w={96} userSelect="none">
       <ConnectButton />
       <Flex
         w="full"

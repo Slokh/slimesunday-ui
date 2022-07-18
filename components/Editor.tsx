@@ -59,61 +59,70 @@ export const Editor = () => {
   const isMintActive = isActive && layers.length >= 5 && false;
 
   return (
-    <Stack direction="column" h="full" pt={4} spacing={6}>
-      <EditorStep
-        number={1}
-        title="Background"
-        placeholder={
-          <ModalRow
+    <Flex direction="column" pt={4}>
+      <Stack
+        direction="column"
+        h="calc(100vh - 220px)"
+        overflowY="scroll"
+        spacing={6}
+      >
+        <EditorStep
+          number={1}
+          title="Background"
+          placeholder={
+            <ModalRow
+              modalType={ModalType.Backgrounds}
+              isDisabled={!isStep1Active}
+            >
+              Add a background
+            </ModalRow>
+          }
+          showPlaceholder={!background}
+        >
+          <EditorRow
+            layer={background}
+            actions={[EditorRowAction.Swap]}
             modalType={ModalType.Backgrounds}
-            isDisabled={!isStep1Active}
-          >
-            Add a background
-          </ModalRow>
-        }
-        showPlaceholder={!background}
-      >
-        <EditorRow
-          layer={background}
-          actions={[EditorRowAction.Swap]}
-          modalType={ModalType.Backgrounds}
-        />
-      </EditorStep>
-      <EditorStep
-        number={2}
-        title="Portrait"
-        placeholder={
-          <ModalRow modalType={ModalType.Portraits} isDisabled={!isStep2Active}>
-            Add a portrait
-          </ModalRow>
-        }
-        showPlaceholder={!portrait}
-      >
-        <EditorRow
-          layer={portrait}
-          actions={[EditorRowAction.Swap]}
-          modalType={ModalType.Portraits}
-        />
-      </EditorStep>
-      <EditorStep
-        number={3}
-        title="Layers"
-        placeholder={
-          <ModalRow modalType={ModalType.Layers} isDisabled={!isStep3Active}>
-            Add a layer
-          </ModalRow>
-        }
-        alwaysShowPlaceholder
-      >
-        <EditorLayers />
-      </EditorStep>
-      <Spacer />
-      <Stack direction="row" w="full">
+          />
+        </EditorStep>
+        <EditorStep
+          number={2}
+          title="Portrait"
+          placeholder={
+            <ModalRow
+              modalType={ModalType.Portraits}
+              isDisabled={!isStep2Active}
+            >
+              Add a portrait
+            </ModalRow>
+          }
+          showPlaceholder={!portrait}
+        >
+          <EditorRow
+            layer={portrait}
+            actions={[EditorRowAction.Swap]}
+            modalType={ModalType.Portraits}
+          />
+        </EditorStep>
+        <EditorStep
+          number={3}
+          title="Layers"
+          placeholder={
+            <ModalRow modalType={ModalType.Layers} isDisabled={!isStep3Active}>
+              Add a layer
+            </ModalRow>
+          }
+          alwaysShowPlaceholder
+        >
+          <EditorLayers />
+        </EditorStep>
+      </Stack>
+      <Stack direction="row" w="full" spacing={0}>
         <DefaultRow onClick={randomize} isDisabled={!isActive}>
           Randomize
         </DefaultRow>
         <DefaultRow isDisabled={!isMintActive}>Mint</DefaultRow>
       </Stack>
-    </Stack>
+    </Flex>
   );
 };
