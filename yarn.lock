@@ -1225,10 +1225,10 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.1"
 
-"@fontsource/inter@^4.5.10":
-  version "4.5.11"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.11.tgz#3c45014821e8c82b247a291f1944dd2764a2d1ed"
-  integrity sha512-toizzQkfXL8YJcG/f8j3EYXYGQe4OxiDEItThSigvHU+cYNDw8HPp3wLYQX745hddsnHqOGCM4exitFSBOU8+w==
+"@fontsource/bungee@^4.5.7":
+  version "4.5.7"
+  resolved "https://registry.yarnpkg.com/@fontsource/bungee/-/bungee-4.5.7.tgz#f1e96153bf6b5ee3592bca61e507a18aee4f2b4e"
+  integrity sha512-rURYNGenDVsSoLCnREbpoFf4bYo8qeO5rberZebxQJhVniFtrPK2NxWOp8JOpZxbQEBizhooqeb70KW5w+X07g==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.5"

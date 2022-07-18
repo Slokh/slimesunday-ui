@@ -1,6 +1,6 @@
 import { Flex, Stack, Text } from "@chakra-ui/react";
 import { ConnectButton as RainbowKitConnectbutton } from "@rainbow-me/rainbowkit";
-import { MdPortrait } from "react-icons/md";
+import { BsPersonFill } from "react-icons/bs";
 import { Row, RowButton } from "./EditorRow";
 
 export const ConnectButton = () => {
@@ -38,7 +38,7 @@ export const ConnectButton = () => {
                     fontWeight="bold"
                     fontSize="md"
                     transition="all 0.2s ease"
-                    _hover={{ bgColor: "primary.300" }}
+                    _hover={{ bgColor: "hover" }}
                   >
                     Connect a wallet
                   </Flex>
@@ -64,16 +64,11 @@ export const ConnectButton = () => {
               }
               return (
                 <Row>
-                  <Text
-                    color="primary.100"
-                    fontWeight="semibold"
-                    fontSize="sm"
-                    pl={2}
-                  >
+                  <Text fontWeight="semibold" fontSize="sm" pl={2}>
                     {account.displayName}
                   </Text>
                   <Stack direction="row" spacing={0}>
-                    <RowButton icon={MdPortrait} onClick={openAccountModal} />
+                    <RowButton icon={BsPersonFill} onClick={openAccountModal} />
                   </Stack>
                 </Row>
               );

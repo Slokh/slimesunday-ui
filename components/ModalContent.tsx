@@ -67,11 +67,10 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
     <Flex
       maxH="inherit"
       direction="column"
-      bgColor="#2C2834"
+      bgColor="primary.100"
       w={80}
-      borderRightColor="#26222E"
+      borderRightColor="primary.600"
       borderRightWidth={1}
-      color="primary.100"
       fontSize="sm"
       overflowY="scroll"
     >
@@ -79,28 +78,36 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
         <Flex
           key={i}
           bgColor={
-            layer === selectedFile ? "#0257CF" : i % 2 === 0 ? "#231D2A" : ""
+            layer === selectedFile
+              ? "primary.400"
+              : i % 2 === 0
+              ? "primary.200"
+              : ""
           }
           onClick={() => onClick(layer)}
           onDoubleClick={
             layer.isDisabled ? () => {} : () => onDoubleClick(layer)
           }
-          color={
-            layer.isDisabled && layer !== selectedFile
-              ? "primary.300"
-              : "primary.100"
-          }
           p={0.5}
           pl={2}
         >
           <Image src={layer.image} h={4} w="auto" alt={layer.name} />
-          <Text pl={2}>{layer.name}</Text>
+          <Text
+            pl={2}
+            color={
+              layer.isDisabled && layer !== selectedFile
+                ? "primary.300"
+                : "primary.700"
+            }
+          >
+            {layer.name}
+          </Text>
         </Flex>
       ))}
     </Flex>
     <Flex
       direction="column"
-      bgColor="#464449"
+      bgColor="primary.600"
       justify="center"
       align="center"
       w={72}
@@ -110,14 +117,12 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
         <Stack spacing={6}>
           <Image src={selectedFile.image} w={56} alt={selectedFile.name} />
           <Flex
-            borderWidth={selectedFile.isDisabled ? 0 : 1}
             borderRadius={16}
-            borderColor="primary.300"
             justify="center"
             align="center"
-            color={selectedFile.isDisabled ? "primary.300" : "primary.100"}
+            bgColor="primary.200"
+            color={selectedFile.isDisabled ? "disabled" : ""}
             cursor={selectedFile.isDisabled ? "default" : "pointer"}
-            bgColor={selectedFile.isDisabled ? "primary.600" : "primary.500"}
             fontSize="sm"
             fontWeight="semibold"
             transition="all 0.2s ease"

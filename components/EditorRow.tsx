@@ -9,8 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Layer, useEditor } from "@slimesunday/context/editor";
 import React from "react";
-import { BsX } from "react-icons/bs";
-import { MdOutlineSwapHoriz } from "react-icons/md";
+import { IoMdSwap, IoMdClose } from "react-icons/io";
 import { ModalRouter, ModalType } from "./Modal";
 
 export const RowButton = ({
@@ -27,7 +26,7 @@ export const RowButton = ({
   return (
     <Flex
       onClick={isDisabled ? () => {} : onClick}
-      color={isDisabled ? "primary.300" : "primary.100"}
+      color={isDisabled ? "primary.300" : "primary.600"}
       borderRadius={8}
       w={7}
       h={7}
@@ -35,7 +34,7 @@ export const RowButton = ({
       cursor="pointer"
       align="center"
       justify="center"
-      _hover={isDisabled ? {} : { bgColor: "primary.600" }}
+      _hover={isDisabled ? {} : { bgColor: "primary.200" }}
     >
       <Icon as={icon} boxSize={boxSize || 5} />
     </Flex>
@@ -69,33 +68,40 @@ export const DefaultRow = ({
   isDisabled?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
-}) => (
-  <Row>
-    <Flex
-      borderWidth={isDisabled ? 0 : 1}
-      borderRadius={16}
-      borderColor="primary.300"
-      w="full"
-      h="full"
-      justify="center"
-      align="center"
-      color={isDisabled ? "primary.300" : "primary.100"}
-      cursor={isDisabled ? "default" : "pointer"}
-      bgColor={isDisabled ? "primary.600" : "primary.500"}
-      transition="all 0.2s ease"
-      onClick={isDisabled ? () => {} : onClick}
-      _hover={
-        isDisabled
-          ? {}
-          : {
-              bgColor: "primary.400",
-            }
+}) => {
+  const props = isDisabled
+    ? {
+        color: "disabled",
       }
-    >
-      {children}
-    </Flex>
-  </Row>
-);
+    : {
+        cursor: "pointer",
+      };
+
+  return (
+    <Row>
+      <Flex
+        borderRadius={16}
+        w="full"
+        h="full"
+        justify="center"
+        align="center"
+        bgColor="primary.200"
+        transition="all 0.2s ease"
+        onClick={isDisabled ? () => {} : onClick}
+        _hover={
+          isDisabled
+            ? {}
+            : {
+                bgColor: "darkHover",
+              }
+        }
+        {...props}
+      >
+        {children}
+      </Flex>
+    </Row>
+  );
+};
 
 export const ModalRow = ({
   modalType,
@@ -145,11 +151,11 @@ export const EditorRow = ({
 
   const options = {
     [EditorRowAction.Swap]: {
-      icon: MdOutlineSwapHoriz,
+      icon: IoMdSwap,
       onClick: onOpen,
     },
     [EditorRowAction.Delete]: {
-      icon: BsX,
+      icon: IoMdClose,
       onClick: () => layer && removeLayer(layer),
     },
   };
@@ -164,7 +170,7 @@ export const EditorRow = ({
         <Box boxSize={8}>
           <Image src={layer.image} alt={layer.name} />
         </Box>
-        <Text color="primary.100" fontWeight="semibold" fontSize="sm" pl={2}>
+        <Text fontWeight="semibold" fontSize="sm" pl={2}>
           {layer.name}
         </Text>
       </Stack>

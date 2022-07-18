@@ -9,7 +9,7 @@ export const Display = () => {
   const displayLayers = [...layers].reverse();
 
   return (
-    <Flex flexGrow={1} justify="center" align="center">
+    <Flex flexGrow={1} justify="center" align="center" bgColor="primary.600">
       <Box position="relative" w="500px" h="625px" bgColor="primary.100">
         {background && (
           <Box position="absolute">

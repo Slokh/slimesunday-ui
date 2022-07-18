@@ -26,14 +26,14 @@ const EditorStep = ({
   <Flex direction="column">
     <Text
       pl={2}
-      color="primary.200"
+      color="primary.300"
       fontWeight="bold"
       fontSize="xs"
       textTransform="uppercase"
       as="span"
     >
-      {`Step ${number} - `}
-      <chakra.span color="primary.100">{title}</chakra.span>
+      {`#${number} - `}
+      <chakra.span color="primary.500">{title}</chakra.span>
     </Text>
     {!showPlaceholder && children}
     {(showPlaceholder || alwaysShowPlaceholder) && placeholder}
@@ -109,7 +109,9 @@ export const Editor = () => {
       </EditorStep>
       <Spacer />
       <Stack direction="row" w="full">
-        <DefaultRow onClick={randomize}>Randomize</DefaultRow>
+        <DefaultRow onClick={randomize} isDisabled={!isActive}>
+          Randomize
+        </DefaultRow>
         <DefaultRow isDisabled={!isMintActive}>Mint</DefaultRow>
       </Stack>
     </Stack>

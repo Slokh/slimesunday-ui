@@ -1,13 +1,13 @@
-import { Box, Flex, Icon, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Stack, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { ConnectButton } from "./ConnectButton";
 import { Editor } from "./Editor";
 
 export const MacButtons = (props: any) => (
   <Stack direction="row" spacing={2} {...props}>
-    <Box w={3} h={3} borderRadius={64} bgColor="#ff5c5c" />
-    <Box w={3} h={3} borderRadius={64} bgColor="#ffbd4c" />
-    <Box w={3} h={3} borderRadius={64} bgColor="#00ca56" />
+    <Box w={3} h={3} borderRadius={64} bgColor="primary.600" />
+    <Box w={3} h={3} borderRadius={64} bgColor="primary.500" />
+    <Box w={3} h={3} borderRadius={64} bgColor="primary.400" />
   </Stack>
 );
 
@@ -26,46 +26,16 @@ export const OpenSeaLogo = (props: any) => {
   );
 };
 
-export const MenuButton = ({
-  icon,
-  text,
-  boxSize,
-  onClick,
-  isDisabled,
-}: any) => (
-  <Stack
-    cursor={isDisabled ? "default" : "pointer"}
-    align="center"
-    direction="row"
-    spacing={1}
-    onClick={isDisabled ? () => {} : onClick}
-    color={isDisabled ? "primary.300" : "primary.100"}
-    borderRadius={8}
-    p={0.5}
-    pl={2}
-    pr={2}
-    transition="all 0.2s ease"
-    _hover={isDisabled ? {} : { bgColor: "primary.600" }}
-  >
-    <Icon as={icon} boxSize={boxSize || 3} />
-    <Text fontSize="xs" fontWeight="semibold">
-      {text}
-    </Text>
-  </Stack>
-);
-
 export const Menu = () => {
   return (
     <Flex
       h={7}
       w="full"
-      bgColor="primary.500"
       justify="center"
       align="center"
       borderBottomWidth={1}
-      borderBottomColor="primary.700"
+      borderColor="primary.600"
       fontWeight="semibold"
-      color="primary.100"
     >
       <MacButtons position="absolute" left={0} pl={4} />
       <Text>Scrapbook</Text>
@@ -83,7 +53,7 @@ export const Sidebar = () => {
   const [selected, setSelected] = useState<SidebarOption>(SidebarOption.Editor);
 
   return (
-    <Flex direction="column" w={96} bgColor="primary.500" userSelect="none">
+    <Flex direction="column" w={96} userSelect="none">
       <ConnectButton />
       <Flex
         w="full"
@@ -96,18 +66,19 @@ export const Sidebar = () => {
         {Object.values(SidebarOption).map((item) => (
           <Flex
             key={item}
-            bgColor={item == selected ? "primary.500" : "primary.600"}
+            bgColor={item == selected ? "selected" : "unselected"}
             h="full"
             w={16}
             justify="center"
             align="center"
             fontSize="xs"
             fontWeight="semibold"
-            color="primary.200"
-            borderColor="primary.700"
+            borderColor="primary.600"
             borderRightWidth={1}
+            borderBottomWidth={item == selected ? 0 : 1}
             cursor="pointer"
             onClick={() => setSelected(item)}
+            _hover={{ bgColor: "selected" }}
           >
             {item}
           </Flex>
