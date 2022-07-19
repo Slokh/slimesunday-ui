@@ -12,11 +12,18 @@ import {
 } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 import { useState } from "react";
-import { BsImage, BsLayers, BsPersonFill } from "react-icons/bs";
+import {
+  BsImage,
+  BsLayers,
+  BsPersonFill,
+  BsStar,
+  BsStarFill,
+} from "react-icons/bs";
 import { MacButtons, OpenSeaLogo } from "./Menu";
 import {
   BackgroundsContent,
   LayersContent,
+  MintPacksContent,
   PortraitsContent,
 } from "./ModalContent";
 
@@ -48,7 +55,7 @@ const ModalOption = ({
       pl={1}
       fontWeight={isActive ? "bold" : "medium"}
     >
-      {text}
+      {`${text}${isActive ? ` •` : ""}`}
     </Text>
   </Flex>
 );
@@ -57,7 +64,7 @@ export enum ModalType {
   Backgrounds = "Backgrounds",
   Portraits = "Portraits",
   Layers = "Layers",
-  Shop = "Shop",
+  MintPacks = "Mint Packs",
 }
 
 export const ModalRouter = ({
@@ -96,18 +103,12 @@ export const ModalRouter = ({
   ];
 
   const secondaryOptionGroup: any[] = [
-    // {
-    //   icon: BsShop,
-    //   text: "Shop",
-    //   onClick: () => setModalType(ModalType.Shop),
-    //   isActive: modalType === ModalType.Shop,
-    // },
-    // {
-    //   icon: BsQuestionLg,
-    //   text: "FAQ",
-    //   onClick: () => setModalType(ModalType.Shop),
-    //   isActive: modalType === ModalType.Shop,
-    // },
+    {
+      icon: BsStarFill,
+      text: "Mint Packs",
+      onClick: () => setModalType(ModalType.MintPacks),
+      isActive: modalType === ModalType.MintPacks,
+    },
   ];
 
   return (
@@ -158,7 +159,7 @@ export const ModalRouter = ({
                 <Spacer />
                 <OpenSeaLogo boxSize={6} />
               </Stack>
-              <Flex w="full" h="sm">
+              <Flex bgColor="primary" w="xl" h="sm">
                 {modalType === ModalType.Backgrounds && (
                   <BackgroundsContent onClose={onClose} />
                 )}
@@ -168,6 +169,7 @@ export const ModalRouter = ({
                 {modalType === ModalType.Layers && (
                   <LayersContent onClose={onClose} />
                 )}
+                {modalType === ModalType.MintPacks && <MintPacksContent />}
               </Flex>
             </Flex>
           </Flex>

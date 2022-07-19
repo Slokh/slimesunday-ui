@@ -67,7 +67,7 @@ export const ConnectButton = () => {
                   <Text fontWeight="semibold" fontSize="sm" pl={2}>
                     {account.displayName.toUpperCase()}
                   </Text>
-                  <Stack direction="row" spacing={0}>
+                  <Stack direction="row" spacing={0} pr={2}>
                     <RowButton icon={BsPersonFill} onClick={openAccountModal} />
                   </Stack>
                 </Row>

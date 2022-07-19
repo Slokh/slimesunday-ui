@@ -1,9 +1,24 @@
-import { metadata } from "@slimesunday/utils";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { ABI, CONTRACT_ADDRESS } from "@slimesunday/utils";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAccount, useContract, useProvider } from "wagmi";
+
+enum LayerType {
+  Background = "background",
+  Portrait = "portrait",
+  Layer = "layer",
+}
 
 export type Layer = {
+  id: string;
   name: string;
   image?: string;
+  layerType: LayerType;
   isDisabled?: boolean;
 };
 
@@ -28,12 +43,15 @@ type State = {
   };
 
   randomize: () => void;
+  importLayers: (tokenIds: string[]) => Promise<any>;
+
   setBackground: (layer: Layer) => void;
   setPortrait: (layer: Layer) => void;
   setLayers: (layers: Layer[]) => void;
   addLayer: (layer: Layer) => void;
   removeLayer: (layer: Layer) => void;
 
+  isBackgroundsEnabled: boolean;
   isPortraitsEnabled: boolean;
   isLayersEnabled: boolean;
 };
@@ -44,66 +62,133 @@ type EditorProviderProps = { children: ReactNode };
 const EditorContext = createContext<EditorContextType>(undefined);
 
 export const EditorProvider = ({ children }: EditorProviderProps) => {
+  const { address } = useAccount();
+  const provider = useProvider();
+  const contract = useContract({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: ABI,
+    signerOrProvider: provider,
+  });
+
+  const [availableBackgrounds, setAvailableBackgrounds] = useState<Layer[]>([]);
+  const [availablePortraits, setAvailablePortraits] = useState<Layer[]>([]);
+  const [availableLayers, setAvailableLayers] = useState<Layer[]>([]);
   const [activeBackground, setBackground] = useState<Layer>();
   const [activePortrait, setPortrait] = useState<Layer>();
   const [activeLayers, setLayers] = useState<any[]>([]);
 
-  const loadAvailable = (key: string) =>
-    metadata[key]?.map((file) => ({
-      name: file,
-      image: `https://opensea-slimesunday.s3.amazonaws.com/${key}/${file}`,
-    }));
+  const fetchTokenMetadata = async (token_id: string) => {
+    const { image, attributes } = JSON.parse(await contract.tokenURI(token_id));
+    const { trait_type, value } = attributes?.[0];
 
-  const backgrounds = loadAvailable("backgrounds");
-  const portraits = loadAvailable("portraits");
-  const layers = loadAvailable("layers");
+    const layerType =
+      trait_type === "Background"
+        ? LayerType.Background
+        : trait_type === "Portrait"
+        ? LayerType.Portrait
+        : LayerType.Layer;
 
-  const randomize = () => {
+    const imagePrefix =
+      layerType === LayerType.Background
+        ? "backgrounds"
+        : layerType === LayerType.Portrait
+        ? "portraits"
+        : "layers";
+
+    return {
+      id: token_id,
+      name: value,
+      layerType,
+      image: `https://opensea-slimesunday.s3.amazonaws.com/${imagePrefix}/${
+        image.split("/")[3]
+      }`,
+    };
+  };
+
+  const importLayers = async (tokenIds: string[]) => {
+    const layers = await Promise.all(tokenIds.map(fetchTokenMetadata));
+
+    setAvailableBackgrounds(
+      layers?.filter(({ layerType }) => layerType === LayerType.Background)
+    );
+    setAvailablePortraits(
+      layers?.filter(({ layerType }) => layerType === LayerType.Portrait)
+    );
+    setAvailableLayers(
+      layers?.filter(({ layerType }) => layerType === LayerType.Layer)
+    );
+  };
+
+  const getOwnedTokenIds = async () => {
+    const response = await fetch(
+      `https://testnets-api.opensea.io/api/v1/assets?owner=${address}&asset_contract_address=${CONTRACT_ADDRESS}&limit=50`
+    );
+    const data = await response.json();
+    return data?.assets.map(({ token_id }: { token_id: string }) => token_id);
+  };
+
+  useEffect(() => {
+    const fetchLayers = async () => {
+      await importLayers(await getOwnedTokenIds());
+    };
+    if (address && contract) {
+      fetchLayers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, contract]);
+
+  const randomize = async () => {
     const getRandomElements = (arr: Layer[], n: number) =>
       arr.sort(() => 0.5 - Math.random()).slice(0, n);
 
-    setBackground(getRandomElements(backgrounds, 1)[0]);
-    setPortrait(getRandomElements(portraits, 1)[0]);
-    setLayers(getRandomElements(layers, 5));
+    setBackground(getRandomElements(availableBackgrounds, 1)[0]);
+    setPortrait(getRandomElements(availablePortraits, 1)[0]);
+    setLayers(getRandomElements(availableLayers, 5));
   };
 
   return (
     <EditorContext.Provider
       value={{
         available: {
-          backgrounds: backgrounds.map((item) =>
-            activeBackground?.name == item.name
+          backgrounds: availableBackgrounds.map((item) =>
+            activeBackground?.id == item.id
               ? { ...item, isDisabled: true }
               : item
           ),
-          portraits: portraits.map((item) =>
-            activePortrait?.name == item.name
-              ? { ...item, isDisabled: true }
-              : item
+          portraits: availablePortraits.map((item) =>
+            activePortrait?.id == item.id ? { ...item, isDisabled: true } : item
           ),
-          layers: layers.map((item) =>
-            activeLayers
-              .map((activeItem) => activeItem.name)
-              .includes(item.name)
+          layers: availableLayers.map((item) =>
+            activeLayers.map((activeItem) => activeItem.id).includes(item.id)
               ? { ...item, isDisabled: true }
               : item
           ),
         },
 
         active: {
-          background: activeBackground,
-          portrait: activePortrait,
-          layers: activeLayers,
+          background: activeBackground && {
+            ...activeBackground,
+            isDisabled: true,
+          },
+          portrait: activePortrait && { ...activePortrait, isDisabled: true },
+          layers: activeLayers.map((layer) => ({ ...layer, isDisabled: true })),
         },
 
         randomize,
+        importLayers,
+
         setBackground,
         setPortrait,
         setLayers,
         addLayer: (layer: any) => setLayers([layer, ...activeLayers]),
         removeLayer: (layer: any) =>
-          setLayers(activeLayers.filter((l) => l !== layer)),
+          setLayers(activeLayers.filter(({ id }) => id !== layer.id)),
 
+        isBackgroundsEnabled: !!(
+          availableBackgrounds?.length ||
+          availablePortraits?.length ||
+          availableLayers?.length
+        ),
         isPortraitsEnabled: !!activeBackground,
         isLayersEnabled: !!activeBackground && !!activePortrait,
       }}

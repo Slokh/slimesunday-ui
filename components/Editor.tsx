@@ -1,4 +1,4 @@
-import { chakra, Flex, Spacer, Stack, Text } from "@chakra-ui/react";
+import { chakra, Divider, Flex, Spacer, Stack, Text } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 import React, { useEffect, useState } from "react";
 import { ModalType } from "./Modal";
@@ -39,22 +39,13 @@ const EditorStep = ({
 );
 
 export const Editor = () => {
-  const [isActive, setActive] = useState(false);
   const {
     active: { background, portrait, layers },
     randomize,
+    isBackgroundsEnabled,
+    isPortraitsEnabled,
+    isLayersEnabled,
   } = useEditor();
-  const { isConnected } = useAccount();
-
-  useEffect(() => {
-    setActive(isConnected);
-  }, [isConnected]);
-
-  const isStep1Active = isActive;
-  const isStep2Active = isActive && background;
-  const isStep3Active =
-    isActive && background && portrait && layers.length <= 30;
-  const isMintActive = isActive && layers.length >= 5 && false;
 
   return (
     <Flex direction="column" pt={4}>
@@ -65,12 +56,20 @@ export const Editor = () => {
         spacing={4}
       >
         <EditorStep
+          number={0}
+          title="Mint Pack"
+          placeholder={
+            <ModalRow modalType={ModalType.MintPacks}>MINT A PACK</ModalRow>
+          }
+          alwaysShowPlaceholder
+        />
+        <EditorStep
           number={1}
           title="Background"
           placeholder={
             <ModalRow
               modalType={ModalType.Backgrounds}
-              isDisabled={!isStep1Active}
+              isDisabled={!isBackgroundsEnabled}
             >
               ADD A BACKGROUND
             </ModalRow>
@@ -89,7 +88,7 @@ export const Editor = () => {
           placeholder={
             <ModalRow
               modalType={ModalType.Portraits}
-              isDisabled={!isStep2Active}
+              isDisabled={!isPortraitsEnabled}
             >
               ADD A PORTRAIT
             </ModalRow>
@@ -106,7 +105,10 @@ export const Editor = () => {
           number={3}
           title="Layers"
           placeholder={
-            <ModalRow modalType={ModalType.Layers} isDisabled={!isStep3Active}>
+            <ModalRow
+              modalType={ModalType.Layers}
+              isDisabled={!isLayersEnabled || layers.length == 30}
+            >
               ADD A LAYER
             </ModalRow>
           }
@@ -115,11 +117,21 @@ export const Editor = () => {
           <EditorLayers />
         </EditorStep>
       </Stack>
-      <Stack direction="row" w="full" spacing={0}>
-        <DefaultRow onClick={randomize} isDisabled={!isActive}>
+      <Stack
+        direction="row"
+        w="full"
+        spacing={0}
+        borderTopWidth={1}
+        borderColor="secondary"
+      >
+        <DefaultRow onClick={randomize} isDisabled={!isBackgroundsEnabled}>
           RANDOMIZE
         </DefaultRow>
-        <DefaultRow isDisabled={!isMintActive}>MINT</DefaultRow>
+        <DefaultRow
+          isDisabled={!background || !portrait || layers.length < 5 || true}
+        >
+          MINT
+        </DefaultRow>
       </Stack>
     </Flex>
   );

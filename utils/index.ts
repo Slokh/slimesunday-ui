@@ -1,5 +1,11 @@
-export const metadata: { [key: string]: string[] } = {
-  backgrounds: Array.from({ length: 32 }, (x, i) => `${i + 33}`),
-  portraits: Array.from({ length: 8 }, (x, i) => `${i + 1}`),
-  layers: Array.from({ length: 128 }, (x, i) => `${i + 65}`),
-};
+export const CONTRACT_ADDRESS = "0x1d44f9b68bec1811ced4f6260a1681287c3bcfea";
+
+export const ABI = [
+  "function mintSet() public payable",
+  "function tokenURI(uint256 tokenId) external view returns (string memory)",
+];
+
+export const MINT_PRICE = 0;
+
+export const TRANSFER_TOPIC =
+  "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
