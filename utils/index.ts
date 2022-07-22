@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0x1d44f9b68bec1811ced4f6260a1681287c3bcfea";
+export const CONTRACT_ADDRESS = "0x6A2697beD007d0578dEA0235fbDF4bF0DB38e4B0";
 
 export const ABI = [
   "function mintSet() public payable",
