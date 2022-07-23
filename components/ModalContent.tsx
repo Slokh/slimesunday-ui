@@ -65,7 +65,7 @@ export const PortraitsContent = ({ onClose }: { onClose: any }) => {
   const {
     available: { portraits },
     active: { portrait },
-    setPortrait,
+    addPortrait,
   } = useEditor();
 
   return (
@@ -74,7 +74,7 @@ export const PortraitsContent = ({ onClose }: { onClose: any }) => {
       selectedFile={selectedPortrait || portrait || portraits?.[0]}
       onClick={setSelectedPortrait}
       onDoubleClick={(background: Layer) => {
-        setPortrait(background);
+        addPortrait(background);
         onClose();
       }}
     />

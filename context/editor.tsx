@@ -8,10 +8,10 @@ import {
 } from "react";
 import { useAccount, useContract, useProvider } from "wagmi";
 
-enum LayerType {
-  Background = "background",
-  Portrait = "portrait",
-  Layer = "layer",
+export enum LayerType {
+  Background = "Background",
+  Portrait = "Portrait",
+  Layer = "Layer",
 }
 
 export type Layer = {
@@ -46,7 +46,7 @@ type State = {
   importLayers: (tokenIds: string[]) => Promise<any>;
 
   setBackground: (layer: Layer) => void;
-  setPortrait: (layer: Layer) => void;
+  addPortrait: (layer: Layer) => void;
   setLayers: (layers: Layer[]) => void;
   addLayer: (layer: Layer) => void;
   removeLayer: (layer: Layer) => void;
@@ -78,30 +78,30 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const [activeLayers, setLayers] = useState<any[]>([]);
 
   const fetchTokenMetadata = async (token_id: string) => {
-    const { image, attributes } = JSON.parse(await contract.tokenURI(token_id));
-    const { trait_type, value } = attributes?.[0];
+    const tokenURI = await contract.tokenURI(token_id);
+    console.log(tokenURI);
+    const { image, attributes } = JSON.parse(
+      tokenURI.replace("data:application/json;utf8,", "")
+    );
 
-    const layerType =
-      trait_type === "Background"
-        ? LayerType.Background
-        : trait_type === "Portrait"
-        ? LayerType.Portrait
-        : LayerType.Layer;
+    const { value: layerTypeValue } = attributes.find(
+      ({ trait_type }: any) => trait_type === "Layer Type"
+    );
+    const { value: nameValue } = attributes.find(
+      ({ trait_type }: any) => trait_type === layerTypeValue
+    );
 
-    const imagePrefix =
-      layerType === LayerType.Background
-        ? "backgrounds"
-        : layerType === LayerType.Portrait
-        ? "portraits"
-        : "layers";
+    const layerType = [LayerType.Background, LayerType.Portrait].includes(
+      layerTypeValue
+    )
+      ? (layerTypeValue as LayerType)
+      : LayerType.Layer;
 
     return {
       id: token_id,
-      name: value,
+      name: nameValue,
       layerType,
-      image: `https://opensea-slimesunday.s3.amazonaws.com/${imagePrefix}/${
-        image.split("/")[3]
-      }`,
+      image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue}.png`,
     };
   };
 
@@ -141,9 +141,23 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     const getRandomElements = (arr: Layer[], n: number) =>
       arr.sort(() => 0.5 - Math.random()).slice(0, n);
 
-    setBackground(getRandomElements(availableBackgrounds, 1)[0]);
-    setPortrait(getRandomElements(availablePortraits, 1)[0]);
-    setLayers(getRandomElements(availableLayers, 5));
+    const background = getRandomElements(availableBackgrounds, 1)[0];
+    const portrait = getRandomElements(availablePortraits, 1)[0];
+    const layers = getRandomElements(availableLayers, 5);
+
+    setBackground(background);
+    setPortrait(portrait);
+    setLayers([portrait, ...layers]);
+  };
+
+  const addLayer = (layer: any) => setLayers([layer, ...activeLayers]);
+
+  const removeLayer = (layer: any) =>
+    setLayers(activeLayers.filter(({ id }) => id !== layer.id));
+
+  const addPortrait = (layer: any) => {
+    setPortrait(layer);
+    addLayer(layer);
   };
 
   return (
@@ -178,11 +192,10 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         importLayers,
 
         setBackground,
-        setPortrait,
+        addPortrait,
         setLayers,
-        addLayer: (layer: any) => setLayers([layer, ...activeLayers]),
-        removeLayer: (layer: any) =>
-          setLayers(activeLayers.filter(({ id }) => id !== layer.id)),
+        addLayer,
+        removeLayer,
 
         isBackgroundsEnabled: !!(
           availableBackgrounds?.length ||

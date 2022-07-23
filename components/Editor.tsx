@@ -65,7 +65,7 @@ export const Editor = () => {
         />
         <EditorStep
           number={1}
-          title="Background"
+          title="Select Background"
           placeholder={
             <ModalRow
               modalType={ModalType.Backgrounds}
@@ -84,7 +84,7 @@ export const Editor = () => {
         </EditorStep>
         <EditorStep
           number={2}
-          title="Portrait"
+          title="Select Portrait"
           placeholder={
             <ModalRow
               modalType={ModalType.Portraits}
@@ -103,7 +103,7 @@ export const Editor = () => {
         </EditorStep>
         <EditorStep
           number={3}
-          title="Layers"
+          title="Rearrange Layers"
           placeholder={
             <ModalRow
               modalType={ModalType.Layers}

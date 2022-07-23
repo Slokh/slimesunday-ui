@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { Layer, useEditor } from "@slimesunday/context/editor";
+import { Layer, LayerType, useEditor } from "@slimesunday/context/editor";
 import update from "immutability-helper";
 import { useCallback, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -30,7 +30,7 @@ export const EditorLayers = () => {
   );
 
   const renderLayer = useCallback(
-    (layer: { name: string; image: string }, index: number) => {
+    (layer: Layer, index: number) => {
       return (
         <DraggableLayer
           key={layer.name}
@@ -57,7 +57,17 @@ interface DragItem {
   type: string;
 }
 
-const DraggableLayer = ({ id, index, moveLayer, layer }: any) => {
+const DraggableLayer = ({
+  id,
+  index,
+  moveLayer,
+  layer,
+}: {
+  id: string;
+  index: number;
+  moveLayer: any;
+  layer: Layer;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [{ handlerId }, drop] = useDrop<
     DragItem,
@@ -136,8 +146,16 @@ const DraggableLayer = ({ id, index, moveLayer, layer }: any) => {
     <div ref={ref} style={{ opacity }} data-handler-id={handlerId}>
       <EditorRow
         layer={layer}
-        actions={[EditorRowAction.Delete]}
-        modalType={ModalType.Layers}
+        actions={
+          layer.layerType === LayerType.Portrait
+            ? [EditorRowAction.Swap]
+            : [EditorRowAction.Delete]
+        }
+        modalType={
+          layer.layerType === LayerType.Portrait
+            ? ModalType.Portraits
+            : ModalType.Layers
+        }
         isDraggable
       />
     </div>
