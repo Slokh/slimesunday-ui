@@ -1,4 +1,10 @@
-import { ABI, CONTRACT_ADDRESS } from "@slimesunday/utils";
+import {
+  ABI,
+  CONTRACT_ADDRESS,
+  METADATA_CONTRACT_ADDRESS,
+} from "@slimesunday/utils";
+import { BigNumber } from "ethers";
+import { hexZeroPad } from "ethers/lib/utils";
 import {
   createContext,
   ReactNode,
@@ -15,12 +21,19 @@ export enum LayerType {
 }
 
 export type Layer = {
-  id: number;
+  tokenId: number;
   layerId: number;
   name: string;
   image?: string;
   layerType: LayerType;
   isDisabled?: boolean;
+};
+
+export type BoundLayer = {
+  tokenId?: number;
+  background?: Layer;
+  portrait?: Layer;
+  layers: Layer[];
 };
 
 export enum EditorMode {
@@ -31,30 +44,27 @@ export enum EditorMode {
 }
 
 type State = {
-  available: {
-    backgrounds: Layer[];
-    portraits: Layer[];
-    layers: Layer[];
-  };
+  backgrounds: Layer[];
+  portraits: Layer[];
+  layers: Layer[];
 
-  active: {
-    background?: Layer;
-    portrait?: Layer;
-    layers: Layer[];
-  };
+  active: BoundLayer;
+  boundLayers: BoundLayer[];
 
   randomize: () => void;
   importLayers: (tokenIds: string[]) => Promise<any>;
 
-  setBackground: (layer: Layer) => void;
+  addBackground: (layer: Layer) => void;
   addPortrait: (layer: Layer) => void;
-  setLayers: (layers: Layer[]) => void;
   addLayer: (layer: Layer) => void;
   removeLayer: (layer: Layer) => void;
+  setLayers: (layers: Layer[]) => void;
 
   isBackgroundsEnabled: boolean;
   isPortraitsEnabled: boolean;
   isLayersEnabled: boolean;
+  isMintingEnabled: boolean;
+  isExistingEnabled: boolean;
 };
 
 type EditorContextType = State | undefined;
@@ -70,20 +80,35 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     contractInterface: ABI,
     signerOrProvider: provider,
   });
+  // HACK: temporary
+  const metadataContract = useContract({
+    addressOrName: METADATA_CONTRACT_ADDRESS,
+    contractInterface: ABI,
+    signerOrProvider: provider,
+  });
 
-  const [availableBackgrounds, setAvailableBackgrounds] = useState<Layer[]>([]);
-  const [availablePortraits, setAvailablePortraits] = useState<Layer[]>([]);
-  const [availableLayers, setAvailableLayers] = useState<Layer[]>([]);
-  const [activeBackground, setBackground] = useState<Layer>();
-  const [activePortrait, setPortrait] = useState<Layer>();
-  const [activeLayers, setLayers] = useState<any[]>([]);
+  const [layers, setLayers] = useState<Layer[]>([]);
+  const [active, setActive] = useState<BoundLayer>({ layers: [] });
+  const [boundLayers, setBoundLayers] = useState<BoundLayer[]>([]);
 
-  const fetchTokenMetadata = async (token_id: string) => {
-    const tokenURI = await contract.tokenURI(token_id);
-    const layerId = await contract.getLayerId(token_id);
+  const layersForType = (layerType: LayerType, disableTokenIds?: number[]) => {
+    let filteredLayers = layers.filter(
+      (layer) => layer.layerType === layerType
+    );
+    if (disableTokenIds) {
+      filteredLayers = filteredLayers.map((layer) =>
+        disableTokenIds.includes(layer.tokenId)
+          ? { ...layer, isDisabled: true }
+          : layer
+      );
+    }
+    return filteredLayers;
+  };
 
-    const { image, attributes } = JSON.parse(
-      tokenURI.replace("data:application/json;utf8,", "")
+  const processMetadata = async (metadata: any) => {
+    const { tokenId, layerId, jsonString } = metadata;
+    const { attributes } = JSON.parse(
+      jsonString.replace("data:application/json;utf8,", "")
     );
 
     const { value: layerTypeValue } = attributes.find(
@@ -100,8 +125,8 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       : LayerType.Layer;
 
     return {
-      id: parseInt(token_id),
-      layerId: layerId.toNumber(),
+      tokenId,
+      layerId,
       name: nameValue,
       layerType,
       image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue}.png`,
@@ -109,16 +134,54 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   };
 
   const importLayers = async (tokenIds: string[]) => {
-    const layers = await Promise.all(tokenIds.map(fetchTokenMetadata));
+    const layers = await Promise.all(
+      tokenIds.map(async (tokenId: string) => ({
+        tokenId: parseInt(tokenId),
+        layerId: (await contract.getLayerId(tokenId)).toNumber(),
+        jsonString: await contract.tokenURI(tokenId),
+      }))
+    );
+    setLayers(await Promise.all(layers.map(processMetadata)));
+  };
 
-    setAvailableBackgrounds(
-      layers?.filter(({ layerType }) => layerType === LayerType.Background)
-    );
-    setAvailablePortraits(
-      layers?.filter(({ layerType }) => layerType === LayerType.Portrait)
-    );
-    setAvailableLayers(
-      layers?.filter(({ layerType }) => layerType === LayerType.Layer)
+  const importBoundLayers = async (tokenIds: string[]) => {
+    setBoundLayers(
+      await Promise.all(
+        tokenIds.map(async (tokenId: string) => {
+          const layerIds = await contract.getBoundLayers(tokenId);
+          const layers = await Promise.all(
+            layerIds.map(async (layerId: BigNumber) => ({
+              tokenId: layerId.toNumber(),
+              layerId: layerId.toNumber(),
+              jsonString: await metadataContract.getTokenURI(
+                layerId.toNumber(),
+                0,
+                [],
+                // @ts-ignore
+                hexZeroPad(1, 32)
+              ),
+            }))
+          );
+          const processedLayers = await Promise.all(
+            layers.map(processMetadata)
+          );
+
+          return {
+            tokenId: parseInt(tokenId),
+            background: processedLayers?.find(
+              ({ layerType }) => layerType === LayerType.Background
+            ),
+            portrait: processedLayers?.find(
+              ({ layerType }) => layerType === LayerType.Portrait
+            ),
+            layers: processedLayers?.filter(
+              ({ layerType }) =>
+                layerType === LayerType.Layer ||
+                layerType === LayerType.Portrait
+            ),
+          };
+        })
+      )
     );
   };
 
@@ -132,7 +195,12 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
 
   useEffect(() => {
     const fetchLayers = async () => {
-      await importLayers(await getOwnedTokenIds());
+      const ownedTokenIds = await getOwnedTokenIds();
+      // TODO: Fix once james adds layer_count
+      importLayers(
+        ownedTokenIds.filter((tokenId: string) => tokenId !== "910")
+      );
+      importBoundLayers(["910"]);
     };
     if (address && contract) {
       fetchLayers();
@@ -141,78 +209,74 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   }, [address, contract]);
 
   const randomize = async () => {
-    const getRandomElements = (arr: Layer[], n: number) =>
+    const r = (arr: Layer[], n: number) =>
       arr.sort(() => 0.5 - Math.random()).slice(0, n);
 
-    const background = getRandomElements(availableBackgrounds, 1)[0];
-    const portrait = getRandomElements(availablePortraits, 1)[0];
-    const layers = getRandomElements(availableLayers, 5);
-
+    const background = r(layersForType(LayerType.Background), 1)[0];
+    const portrait = r(layersForType(LayerType.Portrait), 1)[0];
+    const layers = r(layersForType(LayerType.Layer), 5);
     const portraitIndex = Math.floor(Math.random() * layers.length);
 
-    setBackground(background);
-    setPortrait(portrait);
-    setLayers([
-      ...layers.slice(0, portraitIndex),
+    setActive({
+      background,
       portrait,
-      ...layers.slice(portraitIndex + 1),
-    ]);
+      layers: [
+        ...layers.slice(0, portraitIndex),
+        portrait,
+        ...layers.slice(portraitIndex + 1),
+      ],
+    });
   };
 
-  const addLayer = (layer: any) => setLayers([layer, ...activeLayers]);
+  const addLayer = (layer: any) =>
+    setActive({ ...active, layers: [layer, ...active.layers] });
 
   const removeLayer = (layer: any) =>
-    setLayers(activeLayers.filter(({ id }) => id !== layer.id));
+    setActive({ ...active, layers: active.layers.filter((l) => l !== layer) });
 
   const addPortrait = (layer: any) => {
-    setPortrait(layer);
-    addLayer(layer);
+    setActive({
+      ...active,
+      portrait: layer,
+      layers: [layer, ...active.layers],
+    });
   };
 
   return (
     <EditorContext.Provider
       value={{
-        available: {
-          backgrounds: availableBackgrounds.map((item) =>
-            activeBackground?.id == item.id
-              ? { ...item, isDisabled: true }
-              : item
-          ),
-          portraits: availablePortraits.map((item) =>
-            activePortrait?.id == item.id ? { ...item, isDisabled: true } : item
-          ),
-          layers: availableLayers.map((item) =>
-            activeLayers.map((activeItem) => activeItem.id).includes(item.id)
-              ? { ...item, isDisabled: true }
-              : item
-          ),
-        },
+        backgrounds: layersForType(
+          LayerType.Background,
+          active.background && [active.background.tokenId]
+        ),
+        portraits: layersForType(
+          LayerType.Portrait,
+          active.portrait && [active.portrait.tokenId]
+        ),
+        layers: layersForType(
+          LayerType.Layer,
+          active.layers.map((l) => l.tokenId)
+        ),
 
-        active: {
-          background: activeBackground && {
-            ...activeBackground,
-            isDisabled: true,
-          },
-          portrait: activePortrait && { ...activePortrait, isDisabled: true },
-          layers: activeLayers.map((layer) => ({ ...layer, isDisabled: true })),
-        },
+        active,
+        boundLayers,
 
         randomize,
         importLayers,
 
-        setBackground,
+        addBackground: (layer: any) =>
+          setActive({ ...active, background: layer }),
         addPortrait,
-        setLayers,
         addLayer,
         removeLayer,
+        setLayers: (layers: any) => setActive({ ...active, layers }),
 
-        isBackgroundsEnabled: !!(
-          availableBackgrounds?.length ||
-          availablePortraits?.length ||
-          availableLayers?.length
-        ),
-        isPortraitsEnabled: !!activeBackground,
-        isLayersEnabled: !!activeBackground && !!activePortrait,
+        isBackgroundsEnabled: !!layersForType(LayerType.Background)?.length,
+        isPortraitsEnabled: !!active.background,
+        isLayersEnabled: !!active.background && !!active.portrait,
+        isMintingEnabled:
+          !!active.background && !active.portrait && active.layers.length >= 5,
+        isExistingEnabled: !!boundLayers?.length,
       }}
     >
       {children}

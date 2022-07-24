@@ -1,21 +1,10 @@
-import { Flex, Image, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Flex, Image, Stack, Text } from "@chakra-ui/react";
 import { Layer, useEditor } from "@slimesunday/context/editor";
-import {
-  ABI,
-  CONTRACT_ADDRESS,
-  MINT_PRICE,
-  TRANSFER_TOPIC,
-} from "@slimesunday/utils";
-import { Interface } from "ethers/lib/utils";
-import { useEffect, useState } from "react";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useState } from "react";
 
 export const LayersContent = ({ onClose }: { onClose: any }) => {
   const [selectedLayer, setSelectedLayer] = useState<Layer>();
-  const {
-    available: { layers },
-    addLayer,
-  } = useEditor();
+  const { layers, addLayer } = useEditor();
 
   return (
     <ImageContent
@@ -33,9 +22,9 @@ export const LayersContent = ({ onClose }: { onClose: any }) => {
 export const BackgroundsContent = ({ onClose }: { onClose: any }) => {
   const [selectedBackground, setSelectedBackground] = useState<Layer>();
   const {
-    available: { backgrounds },
+    backgrounds,
     active: { background },
-    setBackground,
+    addBackground,
   } = useEditor();
 
   return (
@@ -44,7 +33,7 @@ export const BackgroundsContent = ({ onClose }: { onClose: any }) => {
       selectedFile={selectedBackground || background || backgrounds?.[0]}
       onClick={setSelectedBackground}
       onDoubleClick={(background: Layer) => {
-        setBackground(background);
+        addBackground(background);
         onClose();
       }}
     />
@@ -54,7 +43,28 @@ export const BackgroundsContent = ({ onClose }: { onClose: any }) => {
 export const PortraitsContent = ({ onClose }: { onClose: any }) => {
   const [selectedPortrait, setSelectedPortrait] = useState<Layer>();
   const {
-    available: { portraits },
+    portraits,
+    active: { portrait },
+    addPortrait,
+  } = useEditor();
+
+  return (
+    <ImageContent
+      files={portraits}
+      selectedFile={selectedPortrait || portrait || portraits?.[0]}
+      onClick={setSelectedPortrait}
+      onDoubleClick={(background: Layer) => {
+        addPortrait(background);
+        onClose();
+      }}
+    />
+  );
+};
+
+export const WalletContent = ({ onClose }: { onClose: any }) => {
+  const [selectedPortrait, setSelectedPortrait] = useState<Layer>();
+  const {
+    portraits,
     active: { portrait },
     addPortrait,
   } = useEditor();
@@ -88,7 +98,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
         <Flex
           key={i}
           bgColor={
-            layer.id === selectedFile.id
+            layer.tokenId === selectedFile.tokenId
               ? "tertiary"
               : i % 2 === 0
               ? "primarydark"
@@ -104,7 +114,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
           <Text
             pl={2}
             color={
-              layer.isDisabled && layer.id !== selectedFile.id
+              layer.isDisabled && layer.tokenId !== selectedFile.tokenId
                 ? i % 2 === 0
                   ? "primary"
                   : "primarydark"

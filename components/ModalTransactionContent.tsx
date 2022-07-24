@@ -10,11 +10,7 @@ import { BigNumber } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 import { IoMdWarning } from "react-icons/io";
-import {
-  useContractReads,
-  useContractWrite,
-  useWaitForTransaction,
-} from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { Display } from "./Display";
 
 export const MintPacksContent = () => {
@@ -72,10 +68,10 @@ export const BindLayersContent = () => {
   } = useEditor();
 
   const finalLayers = background ? [background, ...layers] : layers;
-  const baseTokenId = portrait?.id;
+  const baseTokenId = portrait?.tokenId;
   const layerTokenIds = finalLayers
     .filter((l) => l.layerType !== LayerType.Portrait)
-    .map((l) => l.id);
+    .map((l) => l.tokenId);
 
   let packedLayerIds = BigNumber.from(0);
   for (let i = 0; i < finalLayers.length; i++) {

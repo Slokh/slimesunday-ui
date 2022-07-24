@@ -13,6 +13,7 @@ import {
 import { useEditor } from "@slimesunday/context/editor";
 import { useState } from "react";
 import { BsImage, BsLayers, BsPersonFill, BsStarFill } from "react-icons/bs";
+import { FaFolderOpen } from "react-icons/fa";
 import { FiPackage } from "react-icons/fi";
 import { MacButtons, OpenSeaLogo } from "./Menu";
 import {
@@ -20,7 +21,7 @@ import {
   LayersContent,
   PortraitsContent,
 } from "./ModalImageContent";
-import { MintPacksContent, BindLayersContent } from "./ModalTransactionContent";
+import { BindLayersContent, MintPacksContent } from "./ModalTransactionContent";
 
 const ModalOption = ({
   icon,
@@ -59,6 +60,7 @@ export enum ModalType {
   Backgrounds = "Backgrounds",
   Portraits = "Portraits",
   Layers = "Layers",
+  Wallet = "Wallet",
   MintPacks = "Mint Packs",
   BindLayers = "Bind Layers",
 }
@@ -72,7 +74,12 @@ export const ModalRouter = ({
   onClose: () => void;
   initialModalType: ModalType;
 }) => {
-  const { isPortraitsEnabled, isLayersEnabled } = useEditor();
+  const {
+    isPortraitsEnabled,
+    isLayersEnabled,
+    isMintingEnabled,
+    isExistingEnabled,
+  } = useEditor();
   const [modalType, setModalType] = useState(initialModalType);
 
   const primaryOptionGroup = [
@@ -96,6 +103,13 @@ export const ModalRouter = ({
       isDisabled: !isLayersEnabled,
       isActive: modalType === ModalType.Layers,
     },
+    {
+      icon: FaFolderOpen,
+      text: "Wallet",
+      onClick: () => setModalType(ModalType.Wallet),
+      isDisabled: !isExistingEnabled,
+      isActive: modalType === ModalType.Wallet,
+    },
   ];
 
   const secondaryOptionGroup: any[] = [
@@ -109,6 +123,7 @@ export const ModalRouter = ({
       icon: BsStarFill,
       text: "Bind layers",
       onClick: () => setModalType(ModalType.BindLayers),
+      isDisabled: !isMintingEnabled,
       isActive: modalType === ModalType.BindLayers,
     },
   ];

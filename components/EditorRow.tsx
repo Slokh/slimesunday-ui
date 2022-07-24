@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Layer, useEditor } from "@slimesunday/context/editor";
 import React from "react";
-import { IoMdSwap, IoMdClose } from "react-icons/io";
+import { IoMdClose, IoMdSwap } from "react-icons/io";
 import { ModalRouter, ModalType } from "./Modal";
 
 export const RowButton = ({

@@ -1,7 +1,9 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import "@rainbow-me/rainbowkit/styles.css";
+import { ConnectButton } from "@slimesunday/components/ConnectButton";
 import { Display } from "@slimesunday/components/Display";
-import { Menu, Sidebar } from "@slimesunday/components/Menu";
+import { Editor } from "@slimesunday/components/Editor";
+import { Menu } from "@slimesunday/components/Menu";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => (
@@ -9,7 +11,10 @@ const Home: NextPage = () => (
     <Menu />
     <Flex flexGrow={1}>
       <Display />
-      <Sidebar />
+      <Flex direction="column" h="full" w={96} userSelect="none">
+        <ConnectButton />
+        <Editor />
+      </Flex>
     </Flex>
   </Flex>
 );

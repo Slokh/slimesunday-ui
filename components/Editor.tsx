@@ -1,9 +1,8 @@
-import { chakra, Divider, Flex, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ModalType } from "./Modal";
 
-import { useAccount } from "wagmi";
 import { EditorLayers } from "./EditorLayers";
 import { DefaultRow, EditorRow, EditorRowAction, ModalRow } from "./EditorRow";
 
@@ -45,24 +44,33 @@ export const Editor = () => {
     isBackgroundsEnabled,
     isPortraitsEnabled,
     isLayersEnabled,
+    isMintingEnabled,
+    isExistingEnabled,
   } = useEditor();
 
   return (
-    <Flex direction="column" pt={4}>
+    <Flex direction="column" borderTopWidth={1} borderColor="secondary">
       <Stack
         direction="column"
-        h="calc(100vh - 220px)"
+        h="calc(100vh - 170px)"
         overflowY="scroll"
         spacing={4}
       >
-        <EditorStep
-          number={0}
-          title="Mint Pack"
-          placeholder={
-            <ModalRow modalType={ModalType.MintPacks}>MINT A PACK</ModalRow>
-          }
-          alwaysShowPlaceholder
-        />
+        <Stack
+          direction="row"
+          w="full"
+          spacing={0}
+          borderBottomWidth={1}
+          borderColor="secondary"
+        >
+          <ModalRow modalType={ModalType.MintPacks}>Create New</ModalRow>
+          <ModalRow
+            modalType={ModalType.Wallet}
+            isDisabled={!isExistingEnabled}
+          >
+            Edit Existing
+          </ModalRow>
+        </Stack>
         <EditorStep
           number={1}
           title="Select Background"
@@ -129,7 +137,7 @@ export const Editor = () => {
         </DefaultRow>
         <ModalRow
           modalType={ModalType.BindLayers}
-          isDisabled={!background || !portrait || layers.length < 6}
+          isDisabled={!isMintingEnabled}
         >
           BIND
         </ModalRow>
