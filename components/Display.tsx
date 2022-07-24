@@ -1,7 +1,13 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 
-export const Display = () => {
+export const Display = ({
+  height,
+  width,
+}: {
+  height?: string;
+  width?: string;
+}) => {
   const {
     active: { background, portrait, layers },
   } = useEditor();
@@ -9,11 +15,16 @@ export const Display = () => {
   const displayLayers = [...layers].reverse();
 
   return (
-    <Flex flexGrow={1} justify="center" align="center" bgColor="secondary">
+    <Flex
+      flexGrow={width || height ? 0 : 1}
+      justify="center"
+      align="center"
+      bgColor={width || height ? "" : "secondary"}
+    >
       <Flex
         position="relative"
-        w="500px"
-        h="625px"
+        w={width || "500px"}
+        h={height || "625px"}
         justify="center"
         align="center"
         bgColor="tertiary"

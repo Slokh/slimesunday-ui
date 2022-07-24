@@ -3,6 +3,9 @@ export const CONTRACT_ADDRESS = "0x6A2697beD007d0578dEA0235fbDF4bF0DB38e4B0";
 export const ABI = [
   "function mintSet() public payable",
   "function tokenURI(uint256 tokenId) external view returns (string memory)",
+  "function burnAndBindSingleAndSetActiveLayers(uint256 baseTokenId, uint256 layerTokenId, uint256 packedActiveLayerIds) public",
+  "function burnAndBindMultipleAndSetActiveLayers(uint256 baseTokenId, uint256[] calldata layerTokenIds, uint256 packedActiveLayerIds) public",
+  "function getLayerId(uint256 tokenId) public view virtual returns (uint256)",
 ];
 
 export const MINT_PRICE = 0;

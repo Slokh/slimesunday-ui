@@ -127,11 +127,12 @@ export const Editor = () => {
         <DefaultRow onClick={randomize} isDisabled={!isBackgroundsEnabled}>
           RANDOMIZE
         </DefaultRow>
-        <DefaultRow
-          isDisabled={!background || !portrait || layers.length < 5 || true}
+        <ModalRow
+          modalType={ModalType.BindLayers}
+          isDisabled={!background || !portrait || layers.length < 6}
         >
-          MINT
-        </DefaultRow>
+          BIND
+        </ModalRow>
       </Stack>
     </Flex>
   );

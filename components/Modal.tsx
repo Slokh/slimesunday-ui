@@ -12,20 +12,15 @@ import {
 } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 import { useState } from "react";
-import {
-  BsImage,
-  BsLayers,
-  BsPersonFill,
-  BsStar,
-  BsStarFill,
-} from "react-icons/bs";
+import { BsImage, BsLayers, BsPersonFill, BsStarFill } from "react-icons/bs";
+import { FiPackage } from "react-icons/fi";
 import { MacButtons, OpenSeaLogo } from "./Menu";
 import {
   BackgroundsContent,
   LayersContent,
-  MintPacksContent,
   PortraitsContent,
-} from "./ModalContent";
+} from "./ModalImageContent";
+import { MintPacksContent, BindLayersContent } from "./ModalTransactionContent";
 
 const ModalOption = ({
   icon,
@@ -65,6 +60,7 @@ export enum ModalType {
   Portraits = "Portraits",
   Layers = "Layers",
   MintPacks = "Mint Packs",
+  BindLayers = "Bind Layers",
 }
 
 export const ModalRouter = ({
@@ -104,10 +100,16 @@ export const ModalRouter = ({
 
   const secondaryOptionGroup: any[] = [
     {
-      icon: BsStarFill,
-      text: "Mint Packs",
+      icon: FiPackage,
+      text: "Mint packs",
       onClick: () => setModalType(ModalType.MintPacks),
       isActive: modalType === ModalType.MintPacks,
+    },
+    {
+      icon: BsStarFill,
+      text: "Bind layers",
+      onClick: () => setModalType(ModalType.BindLayers),
+      isActive: modalType === ModalType.BindLayers,
     },
   ];
 
@@ -170,6 +172,7 @@ export const ModalRouter = ({
                   <LayersContent onClose={onClose} />
                 )}
                 {modalType === ModalType.MintPacks && <MintPacksContent />}
+                {modalType === ModalType.BindLayers && <BindLayersContent />}
               </Flex>
             </Flex>
           </Flex>

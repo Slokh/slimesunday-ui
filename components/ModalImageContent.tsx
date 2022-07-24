@@ -1,4 +1,4 @@
-import { Flex, Image, Spacer, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Flex, Image, Spinner, Stack, Text } from "@chakra-ui/react";
 import { Layer, useEditor } from "@slimesunday/context/editor";
 import {
   ABI,
@@ -7,17 +7,8 @@ import {
   TRANSFER_TOPIC,
 } from "@slimesunday/utils";
 import { Interface } from "ethers/lib/utils";
-import { write } from "fs";
 import { useEffect, useState } from "react";
-import {
-  useAccount,
-  useContract,
-  useContractRead,
-  useContractWrite,
-  useProvider,
-  useSigner,
-  useWaitForTransaction,
-} from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 
 export const LayersContent = ({ onClose }: { onClose: any }) => {
   const [selectedLayer, setSelectedLayer] = useState<Layer>();
@@ -166,80 +157,3 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
     </Flex>
   </>
 );
-
-export const MintPacksContent = () => {
-  const [mintedTokenIds, setMintedTokenIds] = useState<string[]>([]);
-  const { randomize, importLayers } = useEditor();
-  const contractWrite = useContractWrite({
-    addressOrName: CONTRACT_ADDRESS,
-    contractInterface: new Interface(ABI),
-    functionName: "mintSet",
-  });
-  const { isLoading } = useWaitForTransaction({
-    hash: contractWrite.data?.hash,
-    onSuccess(data) {
-      setMintedTokenIds(
-        data.logs
-          .filter(({ topics }) => topics[0] === TRANSFER_TOPIC)
-          .map(({ topics }) => topics[3])
-      );
-    },
-  });
-
-  useEffect(() => {
-    const handle = async () => {
-      await importLayers(mintedTokenIds);
-      randomize();
-    };
-    if (mintedTokenIds?.length) {
-      handle();
-    }
-  }, [importLayers, mintedTokenIds, randomize]);
-
-  return (
-    <Flex
-      w="full"
-      direction="column"
-      justify="space-between"
-      align="center"
-      fontSize="lg"
-    >
-      <Flex pt={8} textAlign="center">
-        {`Mint a starter pack for ${MINT_PRICE} ETH to begin your scrapbooking adventure!`}
-      </Flex>
-      <Stack
-        direction="row"
-        spacing={8}
-        w="full"
-        justify="center"
-        align="center"
-      >
-        <Flex>{`${MINT_PRICE} ETH`}</Flex>
-        <Flex>{`>`}</Flex>
-        <Stack>
-          <Text fontSize="md">* 1 Background</Text>
-          <Text fontSize="md">* 1 Portrait</Text>
-          <Text fontSize="md">* 5 Layers</Text>
-        </Stack>
-      </Stack>
-      <Flex
-        w="full"
-        h={16}
-        justify="center"
-        align="center"
-        fontSize="2xl"
-        cursor="pointer"
-        borderTopWidth={1}
-        borderColor="secondary"
-        onClick={() => contractWrite.write()}
-        _hover={{ bgColor: "primarydark" }}
-      >
-        {isLoading || contractWrite.status === "loading" ? (
-          <Spinner />
-        ) : (
-          "Mint a Pack"
-        )}
-      </Flex>
-    </Flex>
-  );
-};

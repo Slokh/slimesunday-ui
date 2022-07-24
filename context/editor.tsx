@@ -15,7 +15,8 @@ export enum LayerType {
 }
 
 export type Layer = {
-  id: string;
+  id: number;
+  layerId: number;
   name: string;
   image?: string;
   layerType: LayerType;
@@ -79,7 +80,8 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
 
   const fetchTokenMetadata = async (token_id: string) => {
     const tokenURI = await contract.tokenURI(token_id);
-    console.log(tokenURI);
+    const layerId = await contract.getLayerId(token_id);
+
     const { image, attributes } = JSON.parse(
       tokenURI.replace("data:application/json;utf8,", "")
     );
@@ -98,7 +100,8 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       : LayerType.Layer;
 
     return {
-      id: token_id,
+      id: parseInt(token_id),
+      layerId: layerId.toNumber(),
       name: nameValue,
       layerType,
       image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue}.png`,
@@ -145,9 +148,15 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     const portrait = getRandomElements(availablePortraits, 1)[0];
     const layers = getRandomElements(availableLayers, 5);
 
+    const portraitIndex = Math.floor(Math.random() * layers.length);
+
     setBackground(background);
     setPortrait(portrait);
-    setLayers([portrait, ...layers]);
+    setLayers([
+      ...layers.slice(0, portraitIndex),
+      portrait,
+      ...layers.slice(portraitIndex + 1),
+    ]);
   };
 
   const addLayer = (layer: any) => setLayers([layer, ...activeLayers]);
