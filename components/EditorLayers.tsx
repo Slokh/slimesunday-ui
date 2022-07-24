@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { Layer, LayerType, useEditor } from "@slimesunday/context/editor";
 import update from "immutability-helper";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ModalType } from "./Modal";
 
@@ -16,17 +16,12 @@ export const EditorLayers = () => {
 
   const moveLayer = useCallback(
     (dragIndex: number, hoverIndex: number) => {
-      // @ts-ignore
-      setLayers((prevLayers: Layer[]) =>
-        update(prevLayers, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, prevLayers[dragIndex] as Layer],
-          ],
-        })
-      );
+      const newLayers = [...layers];
+      newLayers.splice(dragIndex, 1);
+      newLayers.splice(hoverIndex, 0, layers[dragIndex]);
+      setLayers(newLayers);
     },
-    [setLayers]
+    [layers, setLayers]
   );
 
   const renderLayer = useCallback(

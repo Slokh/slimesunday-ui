@@ -70,7 +70,7 @@ export const BindLayersContent = () => {
   const finalLayers = background ? [background, ...layers] : layers;
   const baseTokenId = portrait?.tokenId;
   const layerTokenIds = finalLayers
-    .filter((l) => l.layerType !== LayerType.Portrait)
+    .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
   let packedLayerIds = BigNumber.from(0);
@@ -78,6 +78,15 @@ export const BindLayersContent = () => {
     packedLayerIds = packedLayerIds.or(
       BigNumber.from(finalLayers[i].layerId).shl(248 - i * 8)
     );
+  }
+
+  let functionAndArgs: [string, any[]] = [
+    "burnAndBindMultipleAndSetActiveLayers",
+    [baseTokenId, layerTokenIds, packedLayerIds],
+  ];
+
+  if (!layerTokenIds?.length) {
+    functionAndArgs = ["setActiveLayers", [baseTokenId, packedLayerIds]];
   }
 
   return (
@@ -92,8 +101,8 @@ export const BindLayersContent = () => {
         </Stack>
       }
       buttonText="Bind layers"
-      functionName="burnAndBindMultipleAndSetActiveLayers"
-      args={[baseTokenId, layerTokenIds, packedLayerIds]}
+      functionName={functionAndArgs[0]}
+      args={functionAndArgs[1]}
       onSuccess={() => {}}
     >
       <Flex w="full" justify="space-between" pl={8} pr={8}>

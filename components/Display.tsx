@@ -1,17 +1,17 @@
 import { Box, Flex, Image } from "@chakra-ui/react";
-import { useEditor } from "@slimesunday/context/editor";
+import { BoundLayer, useEditor } from "@slimesunday/context/editor";
 
 export const Display = ({
+  boundLayer,
   height,
   width,
 }: {
+  boundLayer?: BoundLayer;
   height?: string;
   width?: string;
 }) => {
-  const {
-    active: { background, portrait, layers },
-  } = useEditor();
-
+  const { active } = useEditor();
+  const { background, portrait, layers } = boundLayer || active;
   const displayLayers = [...layers].reverse();
 
   return (

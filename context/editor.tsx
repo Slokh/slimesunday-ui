@@ -27,6 +27,7 @@ export type Layer = {
   image?: string;
   layerType: LayerType;
   isDisabled?: boolean;
+  isBound?: boolean;
 };
 
 export type BoundLayer = {
@@ -59,11 +60,12 @@ type State = {
   addLayer: (layer: Layer) => void;
   removeLayer: (layer: Layer) => void;
   setLayers: (layers: Layer[]) => void;
+  setActive: (boundLayer: BoundLayer) => void;
 
   isBackgroundsEnabled: boolean;
   isPortraitsEnabled: boolean;
   isLayersEnabled: boolean;
-  isMintingEnabled: boolean;
+  isBindingEnabled: boolean;
   isExistingEnabled: boolean;
 };
 
@@ -73,7 +75,7 @@ type EditorProviderProps = { children: ReactNode };
 const EditorContext = createContext<EditorContextType>(undefined);
 
 export const EditorProvider = ({ children }: EditorProviderProps) => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const provider = useProvider();
   const contract = useContract({
     addressOrName: CONTRACT_ADDRESS,
@@ -106,9 +108,12 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   };
 
   const processMetadata = async (metadata: any) => {
-    const { tokenId, layerId, jsonString } = metadata;
+    const { tokenId, layerId, jsonString, isBound } = metadata;
     const { attributes } = JSON.parse(
-      jsonString.replace("data:application/json;utf8,", "")
+      Buffer.from(
+        jsonString.replace("data:application/json;base64,", ""),
+        "base64"
+      ).toString("utf-8")
     );
 
     const { value: layerTypeValue } = attributes.find(
@@ -129,6 +134,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       layerId,
       name: nameValue,
       layerType,
+      isBound,
       image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue}.png`,
     };
   };
@@ -148,11 +154,12 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     setBoundLayers(
       await Promise.all(
         tokenIds.map(async (tokenId: string) => {
-          const layerIds = await contract.getBoundLayers(tokenId);
+          const layerIds = await contract.getActiveLayers(tokenId);
           const layers = await Promise.all(
             layerIds.map(async (layerId: BigNumber) => ({
-              tokenId: layerId.toNumber(),
+              tokenId: tokenId,
               layerId: layerId.toNumber(),
+              isBound: true,
               jsonString: await metadataContract.getTokenURI(
                 layerId.toNumber(),
                 0,
@@ -242,6 +249,20 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     });
   };
 
+  const isBindingEnabled = () => {
+    if (!active.background || !active.portrait || active.layers.length < 4) {
+      return false;
+    }
+
+    return !boundLayers.find(({ background, portrait, layers }) => {
+      return (
+        background?.layerId === active.background?.layerId &&
+        portrait?.layerId === active.portrait?.layerId &&
+        layers.every((layer, i) => layer.layerId === active.layers[i].layerId)
+      );
+    });
+  };
+
   return (
     <EditorContext.Provider
       value={{
@@ -270,13 +291,15 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         addLayer,
         removeLayer,
         setLayers: (layers: any) => setActive({ ...active, layers }),
+        setActive,
 
-        isBackgroundsEnabled: !!layersForType(LayerType.Background)?.length,
-        isPortraitsEnabled: !!active.background,
-        isLayersEnabled: !!active.background && !!active.portrait,
-        isMintingEnabled:
-          !!active.background && !active.portrait && active.layers.length >= 5,
-        isExistingEnabled: !!boundLayers?.length,
+        isBackgroundsEnabled:
+          isConnected && !!layersForType(LayerType.Background)?.length,
+        isPortraitsEnabled: isConnected && !!active.background,
+        isLayersEnabled:
+          isConnected && !!active.background && !!active.portrait,
+        isBindingEnabled: isConnected && isBindingEnabled(),
+        isExistingEnabled: isConnected && !!boundLayers?.length,
       }}
     >
       {children}

@@ -44,7 +44,7 @@ export const Editor = () => {
     isBackgroundsEnabled,
     isPortraitsEnabled,
     isLayersEnabled,
-    isMintingEnabled,
+    isBindingEnabled,
     isExistingEnabled,
   } = useEditor();
 
@@ -137,7 +137,7 @@ export const Editor = () => {
         </DefaultRow>
         <ModalRow
           modalType={ModalType.BindLayers}
-          isDisabled={!isMintingEnabled}
+          isDisabled={!isBindingEnabled}
         >
           BIND
         </ModalRow>

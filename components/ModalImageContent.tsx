@@ -1,6 +1,7 @@
 import { Flex, Image, Stack, Text } from "@chakra-ui/react";
-import { Layer, useEditor } from "@slimesunday/context/editor";
-import { useState } from "react";
+import { BoundLayer, Layer, useEditor } from "@slimesunday/context/editor";
+import { useEffect, useState } from "react";
+import { Display } from "./Display";
 
 export const LayersContent = ({ onClose }: { onClose: any }) => {
   const [selectedLayer, setSelectedLayer] = useState<Layer>();
@@ -41,27 +42,6 @@ export const BackgroundsContent = ({ onClose }: { onClose: any }) => {
 };
 
 export const PortraitsContent = ({ onClose }: { onClose: any }) => {
-  const [selectedPortrait, setSelectedPortrait] = useState<Layer>();
-  const {
-    portraits,
-    active: { portrait },
-    addPortrait,
-  } = useEditor();
-
-  return (
-    <ImageContent
-      files={portraits}
-      selectedFile={selectedPortrait || portrait || portraits?.[0]}
-      onClick={setSelectedPortrait}
-      onDoubleClick={(background: Layer) => {
-        addPortrait(background);
-        onClose();
-      }}
-    />
-  );
-};
-
-export const WalletContent = ({ onClose }: { onClose: any }) => {
   const [selectedPortrait, setSelectedPortrait] = useState<Layer>();
   const {
     portraits,
@@ -167,3 +147,61 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
     </Flex>
   </>
 );
+
+export const WalletContent = ({ onClose }: { onClose: any }) => {
+  const [selected, setSelectedLayer] = useState<BoundLayer>();
+  const { boundLayers, setActive } = useEditor();
+
+  useEffect(() => {
+    setSelectedLayer(boundLayers[0]);
+  }, [boundLayers]);
+
+  return (
+    <>
+      <Flex
+        maxH="inherit"
+        direction="column"
+        bgColor="primary"
+        w={80}
+        borderRightColor="secondary"
+        borderRightWidth={1}
+        fontSize="sm"
+        overflowY="scroll"
+      >
+        {boundLayers.map((boundLayer: BoundLayer, i: number) => (
+          <Flex
+            key={i}
+            bgColor={
+              boundLayer == selected
+                ? "tertiary"
+                : i % 2 === 0
+                ? "primarydark"
+                : ""
+            }
+            onClick={() => setSelectedLayer(boundLayer)}
+            onDoubleClick={() => {
+              setActive(boundLayer);
+              onClose();
+            }}
+            p={0.5}
+            pl={2}
+          >
+            <Text pl={2} color="secondary">
+              {`Token ${boundLayer.tokenId}`}
+            </Text>
+          </Flex>
+        ))}
+      </Flex>
+      <Flex
+        direction="column"
+        bgColor="secondary"
+        justify="center"
+        align="center"
+        w={72}
+        borderBottomRightRadius={8}
+      >
+        <Display boundLayer={selected} width="200px" height="250px" />
+      </Flex>
+    </>
+  );
+};

@@ -20,6 +20,7 @@ import {
   BackgroundsContent,
   LayersContent,
   PortraitsContent,
+  WalletContent,
 } from "./ModalImageContent";
 import { BindLayersContent, MintPacksContent } from "./ModalTransactionContent";
 
@@ -75,9 +76,10 @@ export const ModalRouter = ({
   initialModalType: ModalType;
 }) => {
   const {
-    isPortraitsEnabled,
-    isLayersEnabled,
-    isMintingEnabled,
+    backgrounds,
+    portraits,
+    layers,
+    isBindingEnabled,
     isExistingEnabled,
   } = useEditor();
   const [modalType, setModalType] = useState(initialModalType);
@@ -87,20 +89,21 @@ export const ModalRouter = ({
       icon: BsImage,
       text: "Backgrounds",
       onClick: () => setModalType(ModalType.Backgrounds),
+      isDisabled: !backgrounds.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Backgrounds,
     },
     {
       icon: BsPersonFill,
       text: "Portraits",
       onClick: () => setModalType(ModalType.Portraits),
-      isDisabled: !isPortraitsEnabled,
+      isDisabled: !portraits.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Portraits,
     },
     {
       icon: BsLayers,
       text: "Layers",
       onClick: () => setModalType(ModalType.Layers),
-      isDisabled: !isLayersEnabled,
+      isDisabled: !layers?.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Layers,
     },
     {
@@ -123,7 +126,7 @@ export const ModalRouter = ({
       icon: BsStarFill,
       text: "Bind layers",
       onClick: () => setModalType(ModalType.BindLayers),
-      isDisabled: !isMintingEnabled,
+      isDisabled: !isBindingEnabled,
       isActive: modalType === ModalType.BindLayers,
     },
   ];
@@ -185,6 +188,9 @@ export const ModalRouter = ({
                 )}
                 {modalType === ModalType.Layers && (
                   <LayersContent onClose={onClose} />
+                )}
+                {modalType === ModalType.Wallet && (
+                  <WalletContent onClose={onClose} />
                 )}
                 {modalType === ModalType.MintPacks && <MintPacksContent />}
                 {modalType === ModalType.BindLayers && <BindLayersContent />}

@@ -8,9 +8,11 @@ export const ABI = [
   "function tokenURI(uint256 tokenId) external view returns (string memory)",
   "function burnAndBindSingleAndSetActiveLayers(uint256 baseTokenId, uint256 layerTokenId, uint256 packedActiveLayerIds) public",
   "function burnAndBindMultipleAndSetActiveLayers(uint256 baseTokenId, uint256[] calldata layerTokenIds, uint256 packedActiveLayerIds) public",
-  "function getLayerId(uint256 tokenId) public view virtual returns (uint256)",
+  "function getLayerId(uint256 tokenId) public view returns (uint256)",
   "function getBoundLayers(uint256 tokenId) external view returns (uint256[] memory)",
   "function getTokenURI(uint256 layerId, uint256 bindings, uint256[] calldata activeLayers, bytes32 layerSeed) external view returns (string memory)",
+  "function setActiveLayers(uint256 baseTokenId, uint256 packedLayerIds) external",
+  "function getActiveLayers(uint256 tokenId) public view  returns (uint256[] memory)",
 ];
 
 export const MINT_PRICE = 0;
