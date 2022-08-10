@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Layer, useEditor } from "@slimesunday/context/editor";
 import React from "react";
+import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 import { IoMdClose, IoMdSwap } from "react-icons/io";
 import { ModalRouter, ModalType } from "./Modal";
 
@@ -65,7 +66,7 @@ export const DefaultRow = ({
   children,
 }: {
   isDisabled?: boolean;
-  onClick?: () => void;
+  onClick?: any;
   children: React.ReactNode;
 }) => {
   const props = isDisabled
@@ -131,6 +132,7 @@ export const ModalRow = ({
 export enum EditorRowAction {
   Swap = "Swap",
   Delete = "Delete",
+  Toggle = "Toggle",
 }
 
 export const EditorRow = ({
@@ -144,7 +146,7 @@ export const EditorRow = ({
   modalType?: ModalType;
   isDraggable?: boolean;
 }) => {
-  const { removeLayer } = useEditor();
+  const { removeLayer, toggleLayer } = useEditor();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const options = {
@@ -155,6 +157,10 @@ export const EditorRow = ({
     [EditorRowAction.Delete]: {
       icon: IoMdClose,
       onClick: () => layer && removeLayer(layer),
+    },
+    [EditorRowAction.Toggle]: {
+      icon: layer?.isHidden ? BsFillEyeSlashFill : BsFillEyeFill,
+      onClick: () => layer && toggleLayer(layer),
     },
   };
 

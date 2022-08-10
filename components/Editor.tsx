@@ -1,4 +1,4 @@
-import { Flex, Stack, Text } from "@chakra-ui/react";
+import { Flex, Stack, StackDivider, Text } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 import React from "react";
 import { ModalType } from "./Modal";
@@ -40,7 +40,8 @@ const EditorStep = ({
 export const Editor = () => {
   const {
     active: { background, portrait, layers },
-    randomize,
+    shuffle,
+    clear,
     isBackgroundsEnabled,
     isPortraitsEnabled,
     isLayersEnabled,
@@ -52,7 +53,7 @@ export const Editor = () => {
     <Flex direction="column" borderTopWidth={1} borderColor="secondary">
       <Stack
         direction="column"
-        h="calc(100vh - 170px)"
+        h="calc(100vh - 225px)"
         overflowY="scroll"
         spacing={4}
       >
@@ -62,13 +63,14 @@ export const Editor = () => {
           spacing={0}
           borderBottomWidth={1}
           borderColor="secondary"
+          divider={<StackDivider />}
         >
-          <ModalRow modalType={ModalType.MintPacks}>Create New</ModalRow>
+          <ModalRow modalType={ModalType.MintPacks}>New...</ModalRow>
           <ModalRow
             modalType={ModalType.Wallet}
             isDisabled={!isExistingEnabled}
           >
-            Edit Existing
+            Wallet
           </ModalRow>
         </Stack>
         <EditorStep
@@ -131,9 +133,29 @@ export const Editor = () => {
         spacing={0}
         borderTopWidth={1}
         borderColor="secondary"
+        divider={<StackDivider />}
       >
-        <DefaultRow onClick={randomize} isDisabled={!isBackgroundsEnabled}>
-          RANDOMIZE
+        <DefaultRow onClick={() => shuffle(true)}>SHUFFLE ALL</DefaultRow>
+        <DefaultRow
+          onClick={() => shuffle(false)}
+          isDisabled={!isLayersEnabled}
+        >
+          SHUFFLE
+        </DefaultRow>
+      </Stack>
+      <Stack
+        direction="row"
+        w="full"
+        spacing={0}
+        borderTopWidth={1}
+        borderColor="secondary"
+        divider={<StackDivider />}
+      >
+        <DefaultRow
+          onClick={clear}
+          isDisabled={!background && !portrait && !layers}
+        >
+          CLEAR
         </DefaultRow>
         <ModalRow
           modalType={ModalType.BindLayers}

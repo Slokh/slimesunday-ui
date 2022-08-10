@@ -1,6 +1,7 @@
-import { Flex, Stack, Text } from "@chakra-ui/react";
+import { Flex, Link, Stack, Text } from "@chakra-ui/react";
 import { ConnectButton as RainbowKitConnectbutton } from "@rainbow-me/rainbowkit";
 import { BsPersonFill } from "react-icons/bs";
+import { useNetwork } from "wagmi";
 import { Row, RowButton } from "./EditorRow";
 
 export const ConnectButton = () => {
@@ -65,7 +66,14 @@ export const ConnectButton = () => {
               return (
                 <Row>
                   <Text fontWeight="semibold" fontSize="sm" pl={2}>
-                    {account.displayName.toUpperCase()}
+                    <Link
+                      isExternal
+                      href={`https://${
+                        chain.id === 4 ? "testnets." : ""
+                      }opensea.io/${account.address}`}
+                    >
+                      {account.displayName.toUpperCase()}
+                    </Link>
                   </Text>
                   <Stack direction="row" spacing={0} pr={2}>
                     <RowButton icon={BsPersonFill} onClick={openAccountModal} />

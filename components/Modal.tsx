@@ -89,28 +89,24 @@ export const ModalRouter = ({
       icon: BsImage,
       text: "Backgrounds",
       onClick: () => setModalType(ModalType.Backgrounds),
-      isDisabled: !backgrounds.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Backgrounds,
     },
     {
       icon: BsPersonFill,
       text: "Portraits",
       onClick: () => setModalType(ModalType.Portraits),
-      isDisabled: !portraits.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Portraits,
     },
     {
       icon: BsLayers,
       text: "Layers",
       onClick: () => setModalType(ModalType.Layers),
-      isDisabled: !layers?.filter((l) => !l.isDisabled).length,
       isActive: modalType === ModalType.Layers,
     },
     {
       icon: FaFolderOpen,
       text: "Wallet",
       onClick: () => setModalType(ModalType.Wallet),
-      isDisabled: !isExistingEnabled,
       isActive: modalType === ModalType.Wallet,
     },
   ];

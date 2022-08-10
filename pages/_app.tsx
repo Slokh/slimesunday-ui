@@ -16,7 +16,7 @@ const { chains, provider } = configureChains(
   [publicProvider()]
 );
 const { connectors } = getDefaultWallets({
-  appName: "Scrapbook",
+  appName: "Slimeshop",
   chains,
 });
 const wagmiClient = createClient({

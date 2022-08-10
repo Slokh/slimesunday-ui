@@ -9,23 +9,30 @@ import {
 import { BigNumber } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
+import {
+  BsFillEyeFill,
+  BsFillEyeSlashFill,
+  BsImage,
+  BsLayers,
+  BsPersonFill,
+} from "react-icons/bs";
 import { IoMdWarning } from "react-icons/io";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { Display } from "./Display";
 
 export const MintPacksContent = () => {
-  const [mintedTokenIds, setMintedTokenIds] = useState<string[]>([]);
-  const { randomize, importLayers } = useEditor();
+  const [mintedTokenIds, setMintedTokenIds] = useState<number[]>([]);
+  const { shuffle, importLayers } = useEditor();
 
   useEffect(() => {
     const handle = async () => {
       await importLayers(mintedTokenIds);
-      randomize();
+      shuffle(true);
     };
     if (mintedTokenIds?.length) {
       handle();
     }
-  }, [importLayers, mintedTokenIds, randomize]);
+  }, [importLayers, mintedTokenIds, shuffle]);
 
   return (
     <TransactionContent
@@ -39,7 +46,7 @@ export const MintPacksContent = () => {
             .filter(
               ({ topics }: { topics: string[] }) => topics[0] === TRANSFER_TOPIC
             )
-            .map(({ topics }: { topics: string[] }) => topics[3])
+            .map(({ topics }: { topics: string[] }) => parseInt(topics[3]))
         )
       }
     >
@@ -73,10 +80,11 @@ export const BindLayersContent = () => {
     .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
+  const activeLayers = finalLayers.filter((l) => !l.isHidden);
   let packedLayerIds = BigNumber.from(0);
-  for (let i = 0; i < finalLayers.length; i++) {
+  for (let i = 0; i < activeLayers.length; i++) {
     packedLayerIds = packedLayerIds.or(
-      BigNumber.from(finalLayers[i].layerId).shl(248 - i * 8)
+      BigNumber.from(activeLayers[i].layerId).shl(248 - i * 8)
     );
   }
 
@@ -88,6 +96,12 @@ export const BindLayersContent = () => {
   if (!layerTokenIds?.length) {
     functionAndArgs = ["setActiveLayers", [baseTokenId, packedLayerIds]];
   }
+
+  const icons = {
+    Background: BsImage,
+    Portrait: BsPersonFill,
+    Layer: BsLayers,
+  };
 
   return (
     <TransactionContent
@@ -107,11 +121,17 @@ export const BindLayersContent = () => {
     >
       <Flex w="full" justify="space-between" pl={8} pr={8}>
         <Stack>
-          <Text fontWeight="bold">Selected Layers</Text>
+          <Text fontWeight="bold">Layer Stack</Text>
           {finalLayers.map((layer, i) => (
             <Stack direction="row" key={i}>
-              <Text w={6} textAlign="end">{`${i + 1}.`}</Text>
-              <Text>{`(${layer.layerType[0]})`}</Text>
+              <Text>
+                <Icon
+                  as={layer.isHidden ? BsFillEyeSlashFill : BsFillEyeFill}
+                />
+              </Text>
+              <Text>
+                <Icon as={icons[layer.layerType]} />
+              </Text>
               <Text>{layer.name}</Text>
             </Stack>
           ))}
@@ -156,7 +176,7 @@ export const TransactionContent = ({
       align="center"
       fontSize="lg"
     >
-      <Flex pt={8} textAlign="center">
+      <Flex pt={4} textAlign="center">
         {heroText}
       </Flex>
       {children}

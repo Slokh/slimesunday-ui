@@ -144,7 +144,7 @@ const DraggableLayer = ({
         actions={
           layer.layerType === LayerType.Portrait
             ? [EditorRowAction.Swap]
-            : [EditorRowAction.Delete]
+            : [EditorRowAction.Toggle, EditorRowAction.Delete]
         }
         modalType={
           layer.layerType === LayerType.Portrait

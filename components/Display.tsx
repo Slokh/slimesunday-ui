@@ -12,7 +12,9 @@ export const Display = ({
 }) => {
   const { active } = useEditor();
   const { background, portrait, layers } = boundLayer || active;
-  const displayLayers = [...layers].reverse();
+  const displayLayers = [...layers]
+    .reverse()
+    .filter(({ isHidden }) => !isHidden);
 
   return (
     <Flex

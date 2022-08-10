@@ -35,7 +35,7 @@ export const Menu = () => {
       fontWeight="semibold"
     >
       <MacButtons position="absolute" left={0} pl={4} />
-      <Text fontWeight="bold">SCRAPBOOK</Text>
+      <Text fontWeight="bold">SLIMESHOP</Text>
       <OpenSeaLogo position="absolute" right={0} pr={4} boxSize={4} />
     </Flex>
   );
