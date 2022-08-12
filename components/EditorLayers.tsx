@@ -28,7 +28,7 @@ export const EditorLayers = () => {
     (layer: Layer, index: number) => {
       return (
         <DraggableLayer
-          key={layer.name}
+          key={index}
           index={index}
           id={layer.name}
           layer={layer}

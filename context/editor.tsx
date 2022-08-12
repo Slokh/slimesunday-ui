@@ -148,7 +148,10 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       layerType,
       isBound,
       isHidden: isHidden && layerType != LayerType.Portrait,
-      image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue}.png`,
+      image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue.replace(
+        " ",
+        "+"
+      )}.png`,
     };
   };
 
@@ -248,6 +251,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       }
     );
     const data = await response.json();
+    console.log(data.assets.length);
     return data?.assets.map(
       ({ token_id, traits }: { token_id: string; traits: any }) => ({
         tokenId: parseInt(token_id),

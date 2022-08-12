@@ -45,14 +45,15 @@ const ModalOption = ({
     <Icon
       as={icon}
       boxSize={4}
-      color={isDisabled ? "primarydark" : "secondary"}
+      color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
     />
     <Text
-      color={isDisabled ? "primarydark" : "secondary"}
+      color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
       pl={1}
       fontWeight={isActive ? "bold" : "medium"}
+      whiteSpace="nowrap"
     >
-      {`${text}${isActive ? ` •` : ""}`}
+      {text}
     </Text>
   </Flex>
 );
@@ -75,37 +76,32 @@ export const ModalRouter = ({
   onClose: () => void;
   initialModalType: ModalType;
 }) => {
-  const {
-    backgrounds,
-    portraits,
-    layers,
-    isBindingEnabled,
-    isExistingEnabled,
-  } = useEditor();
+  const { backgrounds, portraits, layers, boundLayers, isBindingEnabled } =
+    useEditor();
   const [modalType, setModalType] = useState(initialModalType);
 
   const primaryOptionGroup = [
     {
       icon: BsImage,
-      text: "Backgrounds",
+      text: `Backgrounds (${backgrounds.length})`,
       onClick: () => setModalType(ModalType.Backgrounds),
       isActive: modalType === ModalType.Backgrounds,
     },
     {
       icon: BsPersonFill,
-      text: "Portraits",
+      text: `Portraits (${portraits.length})`,
       onClick: () => setModalType(ModalType.Portraits),
       isActive: modalType === ModalType.Portraits,
     },
     {
       icon: BsLayers,
-      text: "Layers",
+      text: `Layers (${layers.length})`,
       onClick: () => setModalType(ModalType.Layers),
       isActive: modalType === ModalType.Layers,
     },
     {
       icon: FaFolderOpen,
-      text: "Wallet",
+      text: `Wallet (${boundLayers.length})`,
       onClick: () => setModalType(ModalType.Wallet),
       isActive: modalType === ModalType.Wallet,
     },
