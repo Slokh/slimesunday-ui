@@ -30,7 +30,8 @@ const App = ({ Component, pageProps }: AppProps) => {
     <ChakraProvider theme={theme}>
       <DndProvider backend={HTML5Backend}>
         <Head>
-          <title>SlimeSunday</title>
+          <title>SLIMESHOP</title>
+          <link rel="shortcut icon" href="/favicon.ico" />
         </Head>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>

@@ -1,10 +1,11 @@
-import { Flex, Stack, StackDivider, Text } from "@chakra-ui/react";
+import { Flex, Link, Stack, StackDivider, Text } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
 import React from "react";
 import { ModalType } from "./Modal";
 
 import { EditorLayers } from "./EditorLayers";
 import { DefaultRow, EditorRow, EditorRowAction, ModalRow } from "./EditorRow";
+import { useRouter } from "next/router";
 
 const EditorStep = ({
   number,
@@ -53,7 +54,7 @@ export const Editor = () => {
     <Flex direction="column" borderTopWidth={1} borderColor="secondary">
       <Stack
         direction="column"
-        h="calc(100vh - 225px)"
+        h="calc(100vh - 295px)"
         overflowY="scroll"
         spacing={4}
       >
@@ -163,6 +164,15 @@ export const Editor = () => {
         >
           BIND
         </ModalRow>
+      </Stack>
+      <Stack w="full" borderTopWidth={1} borderColor="secondary">
+        <Link
+          href="https://testnets.opensea.io/collection/test-r8wu178kdo?search[numericTraits][0][name]=Layer%20Count&search[numericTraits][0][ranges][0][min]=7&search[numericTraits][0][ranges][0][max]=7&search[sortAscending]=true&search[sortBy]=UNIT_PRICE"
+          _hover={{}}
+          isExternal
+        >
+          <DefaultRow>GALLERY</DefaultRow>
+        </Link>
       </Stack>
     </Flex>
   );
