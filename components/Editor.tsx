@@ -6,6 +6,7 @@ import { ModalType } from "./Modal";
 import { EditorLayers } from "./EditorLayers";
 import { DefaultRow, EditorRow, EditorRowAction, ModalRow } from "./EditorRow";
 import { useRouter } from "next/router";
+import { OpenSeaLogo } from "./Menu";
 
 const EditorStep = ({
   number,
@@ -171,7 +172,12 @@ export const Editor = () => {
           _hover={{}}
           isExternal
         >
-          <DefaultRow>GALLERY</DefaultRow>
+          <DefaultRow>
+            <Flex align="center">
+              <OpenSeaLogo pr={1} boxSize={5} />
+              GALLERY
+            </Flex>
+          </DefaultRow>
         </Link>
       </Stack>
     </Flex>
