@@ -36,7 +36,7 @@ export const MintPacksContent = () => {
 
   return (
     <TransactionContent
-      heroText={`Mint a starter pack for ${MINT_PRICE} ETH to begin your scrapbooking adventure!`}
+      heroText={`Mint a starter pack for ${MINT_PRICE} ETH to begin your collage!`}
       buttonText="Mint a pack"
       functionName="mintSet"
       args={[]}
@@ -107,10 +107,9 @@ export const BindLayersContent = () => {
     <TransactionContent
       heroText={
         <Stack>
-          <Text>Bind the selected layers to create your final NFT!</Text>
-          <Text fontWeight="bold">
-            <Icon as={IoMdWarning} />
-            WARNING: This action is irreversible.
+          <Text>
+            By binding, you give permission for SlimeSunday to use the created
+            piece as they like.
           </Text>
         </Stack>
       }
@@ -121,7 +120,6 @@ export const BindLayersContent = () => {
     >
       <Flex w="full" justify="space-between" pl={8} pr={8}>
         <Stack>
-          <Text fontWeight="bold">Layer Stack</Text>
           {finalLayers.map((layer, i) => (
             <Stack direction="row" key={i}>
               <Text>
@@ -138,6 +136,10 @@ export const BindLayersContent = () => {
         </Stack>
         <Display height="200px" width="160px" />
       </Flex>
+      <Text fontWeight="bold">
+        <Icon as={IoMdWarning} />
+        WARNING: This action is irreversible.
+      </Text>
     </TransactionContent>
   );
 };
