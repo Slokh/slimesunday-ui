@@ -340,7 +340,12 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     setActive({
       ...active,
       portrait: layer,
-      layers: [layer, ...active.layers],
+      layers: [
+        layer,
+        ...active.layers.filter(
+          ({ layerType }) => layerType !== LayerType.Portrait
+        ),
+      ],
     });
   };
 

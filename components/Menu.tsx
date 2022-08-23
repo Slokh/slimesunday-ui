@@ -27,8 +27,6 @@ export const OpenSeaLogo = (props: any) => {
 const getStatus = () => {
   let difference = +new Date("2022-09-15 19:00:00 GMT") - +new Date();
 
-  let timeLeft = "";
-
   if (difference > 0) {
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
     const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -44,7 +42,7 @@ const getStatus = () => {
 };
 
 export const Menu = () => {
-  const [status, setStatus] = useState(getStatus());
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
