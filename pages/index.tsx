@@ -92,16 +92,22 @@ const TempHome: NextPage = () => {
                   direction="column"
                   bgColor="primary"
                   w="full"
-                  h="sm"
+                  pt={16}
+                  pb={16}
+                  pl={4}
+                  pr={4}
                   justify="center"
                   align="center"
+                  textAlign="center"
                   borderBottomRightRadius={8}
                   borderBottomLeftRadius={8}
                 >
-                  <Text fontSize="4xl">Welcome to the</Text>
-                  <Text fontSize="7xl">SLIMESHOP</Text>
-                  <Text fontSize="4xl">OPENING SEP 8TH @ 2PM EST</Text>
-                  <Text fontSize="4xl">{status}</Text>
+                  <Text fontSize={["xl", "4xl"]}>Welcome to the</Text>
+                  <Text fontSize={["4xl", "7xl"]}>SLIMESHOP</Text>
+                  <Text fontSize={["xl", "4xl"]}>
+                    OPENING SEP 8TH @ 2PM EST
+                  </Text>
+                  <Text fontSize={["xl", "4xl"]}>{status}</Text>
                 </Flex>
               </Flex>
             </Flex>
