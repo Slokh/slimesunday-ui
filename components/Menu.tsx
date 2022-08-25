@@ -24,7 +24,7 @@ export const OpenSeaLogo = (props: any) => {
   );
 };
 
-const getStatus = () => {
+export const getStatus = () => {
   let difference = +new Date("2022-09-15 19:00:00 GMT") - +new Date();
 
   if (difference > 0) {
@@ -33,7 +33,7 @@ const getStatus = () => {
     const minutes = Math.floor((difference / 1000 / 60) % 60);
     const seconds = Math.floor((difference / 1000) % 60);
 
-    return `OPENS IN ${days}:${hours < 10 ? `0${hours}` : hours}:${
+    return `${days}:${hours < 10 ? `0${hours}` : hours}:${
       minutes < 10 ? `0${minutes}` : minutes
     }:${seconds < 10 ? `0${seconds}` : seconds}`;
   }
