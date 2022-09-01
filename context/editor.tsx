@@ -3,7 +3,7 @@ import {
   CONTRACT_ADDRESS,
   METADATA_CONTRACT_ADDRESS,
 } from "@slimesunday/utils";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { hexZeroPad } from "ethers/lib/utils";
 import {
   createContext,
@@ -81,7 +81,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
-  const contract = useContract({
+  const contract: ethers.Contract = useContract({
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: ABI,
     signerOrProvider: provider,
@@ -230,52 +230,32 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     );
   };
 
-  const getOwnedTokenIds = async () => {
-    const apiBase =
-      chain?.id === 1
-        ? "https://api.opensea.io/api/v1"
-        : "https://testnets-api.opensea.io/api/v1";
-
-    const apiKey =
-      chain?.id === 1
-        ? process.env.NEXT_PUBLIC_MAINNET_API_KEY
-        : process.env.NEXT_PUBLIC_TESTNET_API_KEY;
-
-    const response = await fetch(
-      `${apiBase}/assets?owner=${address}&asset_contract_address=${CONTRACT_ADDRESS}&limit=50`,
-      {
-        method: "GET",
-        headers: {
-          "x-api-key": apiKey || "",
-        },
-      }
-    );
-    const data = await response.json();
-    console.log(data.assets.length);
-    return data?.assets.map(
-      ({ token_id, traits }: { token_id: string; traits: any }) => ({
-        tokenId: parseInt(token_id),
-        isBound: !!traits.find(
-          ({ trait_type }: { trait_type: string }) =>
-            trait_type === "Layer Count"
-        ),
-      })
-    );
-  };
-
   useEffect(() => {
     const fetchLayers = async () => {
-      const ownedTokenIds = await getOwnedTokenIds();
-      importLayers(
-        ownedTokenIds
-          .filter(({ isBound }: any) => !isBound)
-          .map(({ tokenId }: any) => tokenId)
+      const transfersIn = await contract.queryFilter(
+        contract.filters.Transfer(null, address)
       );
-      importBoundLayers(
-        ownedTokenIds
-          .filter(({ isBound }: any) => isBound)
-          .map(({ tokenId }: any) => tokenId)
+      const tokenIdsIn = transfersIn.map(({ topics }) => parseInt(topics[3]));
+
+      const transfersOut = await contract.queryFilter(
+        contract.filters.Transfer(address, null)
       );
+      const tokenIdsOut = transfersOut.map(({ topics }) => parseInt(topics[3]));
+
+      const bindEvents = await contract.queryFilter(
+        contract.filters.LayersBoundToToken()
+      );
+      const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[1]));
+
+      const ownedTokenIds = tokenIdsIn.filter(
+        (id) => !tokenIdsOut.includes(id)
+      );
+      const ownedBoundTokenIds = boundTokenIds.filter(
+        (id) => tokenIdsIn.includes(id) && !tokenIdsOut.includes(id)
+      );
+
+      importLayers(ownedTokenIds);
+      importBoundLayers(ownedBoundTokenIds);
     };
     if (address && contract) {
       fetchLayers();

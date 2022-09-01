@@ -13,6 +13,8 @@ export const ABI = [
   "function getTokenURI(uint256 layerId, uint256 bindings, uint256[] calldata activeLayers, bytes32 layerSeed) external view returns (string memory)",
   "function setActiveLayers(uint256 baseTokenId, uint256 packedLayerIds) external",
   "function getActiveLayers(uint256 tokenId) public view  returns (uint256[] memory)",
+  "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
+  "event LayersBoundToToken(uint256 indexed tokenId, uint256 indexed boundLayersBitmap)",
 ];
 
 export const MINT_PRICE = 0;
