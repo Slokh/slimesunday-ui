@@ -136,7 +136,7 @@ export const BindLayersContent = () => {
         </Stack>
         <Display height="200px" width="160px" />
       </Flex>
-      <Text fontWeight="bold">
+      <Text fontWeight="bold" color="red">
         <Icon as={IoMdWarning} />
         WARNING: This action is irreversible.
       </Text>

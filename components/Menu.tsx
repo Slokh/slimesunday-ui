@@ -25,7 +25,7 @@ export const OpenSeaLogo = (props: any) => {
 };
 
 export const getStatus = () => {
-  let difference = +new Date("2022-09-15 19:00:00 GMT") - +new Date();
+  let difference = +new Date("2022-09-08 19:00:00 GMT") - +new Date();
 
   if (difference > 0) {
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
