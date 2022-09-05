@@ -22,17 +22,17 @@ import { Display } from "./Display";
 
 export const MintPacksContent = () => {
   const [mintedTokenIds, setMintedTokenIds] = useState<number[]>([]);
-  const { shuffle, importLayers } = useEditor();
+  const { shuffle, fetchLayers } = useEditor();
 
   useEffect(() => {
     const handle = async () => {
-      await importLayers(mintedTokenIds);
+      await fetchLayers();
       shuffle(true);
     };
     if (mintedTokenIds?.length) {
       handle();
     }
-  }, [importLayers, mintedTokenIds, shuffle]);
+  }, [fetchLayers, mintedTokenIds, shuffle]);
 
   return (
     <TransactionContent

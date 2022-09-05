@@ -55,7 +55,7 @@ type State = {
 
   clear: () => void;
   shuffle: (all: boolean) => void;
-  importLayers: (tokenIds: number[]) => Promise<any>;
+  fetchLayers: () => Promise<any>;
 
   addBackground: (layer: Layer) => void;
   addPortrait: (layer: Layer) => void;
@@ -78,7 +78,6 @@ type EditorProviderProps = { children: ReactNode };
 const EditorContext = createContext<EditorContextType>(undefined);
 
 export const EditorProvider = ({ children }: EditorProviderProps) => {
-  const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
   const contract: ethers.Contract = useContract({
@@ -86,7 +85,6 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     contractInterface: ABI,
     signerOrProvider: provider,
   });
-  // HACK: temporary
   const metadataContract = useContract({
     addressOrName: METADATA_CONTRACT_ADDRESS,
     contractInterface: ABI,
@@ -190,8 +188,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
                 layerId,
                 0,
                 [],
-                // @ts-ignore
-                hexZeroPad(1, 32)
+                hexZeroPad("0x1", 32)
               );
               layers.push(
                 await processMetadata({
@@ -230,33 +227,32 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     );
   };
 
+  const fetchLayers = async () => {
+    const transfersIn = await contract.queryFilter(
+      contract.filters.Transfer(null, address)
+    );
+    const tokenIdsIn = transfersIn.map(({ topics }) => parseInt(topics[3]));
+
+    const transfersOut = await contract.queryFilter(
+      contract.filters.Transfer(address, null)
+    );
+    const tokenIdsOut = transfersOut.map(({ topics }) => parseInt(topics[3]));
+
+    const bindEvents = await contract.queryFilter(
+      contract.filters.LayersBoundToToken()
+    );
+    const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[1]));
+
+    const ownedTokenIds = tokenIdsIn.filter((id) => !tokenIdsOut.includes(id));
+    const ownedBoundTokenIds = boundTokenIds.filter(
+      (id) => tokenIdsIn.includes(id) && !tokenIdsOut.includes(id)
+    );
+
+    importLayers(ownedTokenIds);
+    importBoundLayers(ownedBoundTokenIds);
+  };
+
   useEffect(() => {
-    const fetchLayers = async () => {
-      const transfersIn = await contract.queryFilter(
-        contract.filters.Transfer(null, address)
-      );
-      const tokenIdsIn = transfersIn.map(({ topics }) => parseInt(topics[3]));
-
-      const transfersOut = await contract.queryFilter(
-        contract.filters.Transfer(address, null)
-      );
-      const tokenIdsOut = transfersOut.map(({ topics }) => parseInt(topics[3]));
-
-      const bindEvents = await contract.queryFilter(
-        contract.filters.LayersBoundToToken()
-      );
-      const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[1]));
-
-      const ownedTokenIds = tokenIdsIn.filter(
-        (id) => !tokenIdsOut.includes(id)
-      );
-      const ownedBoundTokenIds = boundTokenIds.filter(
-        (id) => tokenIdsIn.includes(id) && !tokenIdsOut.includes(id)
-      );
-
-      importLayers(ownedTokenIds);
-      importBoundLayers(ownedBoundTokenIds);
-    };
     if (address && contract) {
       fetchLayers();
     }
@@ -371,7 +367,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
 
         clear,
         shuffle,
-        importLayers,
+        fetchLayers,
 
         addBackground: (layer: any) =>
           setActive({ ...active, background: layer }),
