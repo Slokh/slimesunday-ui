@@ -17,7 +17,8 @@ export const ABI = [
   "event LayersBoundToToken(uint256 indexed tokenId, uint256 indexed boundLayersBitmap)",
 ];
 
-export const MINT_PRICE = 0;
+export const ALLOWLIST_MINT_PRICE = 0.095;
+export const MINT_PRICE = 0.15;
 
 export const TRANSFER_TOPIC =
   "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";

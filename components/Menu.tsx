@@ -1,5 +1,20 @@
-import { Box, Flex, Image, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Icon,
+  Image,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  Spacer,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { faqs } from "@slimesunday/utils/faq";
 import { useEffect, useState } from "react";
+import { FaQuestionCircle } from "react-icons/fa";
 
 export const MacButtons = (props: any) => (
   <Stack direction="row" spacing={2} {...props}>
@@ -40,8 +55,62 @@ export const getStatus = () => {
 
   return "";
 };
+const FAQ = ({ isOpen, onClose }: any) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent bgColor="transparent" maxW="3xl">
+        <ModalBody p={0} m={0}>
+          <Flex cursor="default" userSelect="none">
+            <Flex w="full" direction="column">
+              <Stack
+                direction="row"
+                bgColor="primary"
+                w="full"
+                align="center"
+                borderTopRightRadius={8}
+                borderTopLeftRadius={8}
+                borderBottomColor="secondary"
+                borderBottomWidth={1}
+                p={4}
+              >
+                <MacButtons onClick={onClose} />
+                <Spacer />
+                <OpenSeaLogo boxSize={6} />
+              </Stack>
+              <Flex
+                bgColor="primary"
+                w="full"
+                pl={4}
+                pr={4}
+                justify="center"
+                align="center"
+                textAlign="center"
+                borderBottomRightRadius={8}
+                borderBottomLeftRadius={8}
+              >
+                <Stack overflowY="scroll" maxH="2xl" spacing={8} pt={8} pb={8}>
+                  {faqs.map(([question, answer]) => (
+                    <Flex key={question} direction="column">
+                      <Text fontWeight="bold" fontSize="lg">
+                        {question}
+                      </Text>
+                      <Text fontSize="lg">{answer}</Text>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Flex>
+            </Flex>
+          </Flex>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};
 
 export const Menu = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -51,6 +120,13 @@ export const Menu = () => {
 
     return () => clearTimeout(timer);
   });
+
+  useEffect(() => {
+    if (!localStorage.getItem("visited")) {
+      onOpen();
+      localStorage.setItem("visited", "true");
+    }
+  }, [onOpen]);
 
   return (
     <Flex
@@ -67,9 +143,13 @@ export const Menu = () => {
     >
       <MacButtons />
       <Text fontWeight="bold">SLIMESHOP</Text>
-      <Text w={48} fontWeight="bold" textAlign="end">
-        {status}
-      </Text>
+      <Flex align="center">
+        <Text w={48} fontWeight="bold" textAlign="end">
+          {status}
+        </Text>
+        <Icon ml={2} as={FaQuestionCircle} onClick={onOpen} cursor="pointer" />
+      </Flex>
+      <FAQ isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 };
