@@ -114,7 +114,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
       w={72}
       borderBottomRightRadius={8}
     >
-      {selectedFile && (
+      {selectedFile?.layerId >= 0 && (
         <Stack spacing={6}>
           <Image src={selectedFile.image} w={56} alt={selectedFile.name} />
           <Flex

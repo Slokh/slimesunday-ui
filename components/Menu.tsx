@@ -12,6 +12,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
+import { ALLOWLIST_START_TIME } from "@slimesunday/utils/allowlist";
 import { faqs } from "@slimesunday/utils/faq";
 import { useEffect, useState } from "react";
 import { FaQuestionCircle } from "react-icons/fa";
@@ -40,7 +41,7 @@ export const OpenSeaLogo = (props: any) => {
 };
 
 export const getStatus = () => {
-  let difference = +new Date("2022-09-08 19:00:00 GMT") - +new Date();
+  let difference = +ALLOWLIST_START_TIME - +new Date();
 
   if (difference > 0) {
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -144,8 +145,8 @@ export const Menu = () => {
       <MacButtons />
       <Text fontWeight="bold">SLIMESHOP</Text>
       <Flex align="center">
-        <Text w={48} fontWeight="bold" textAlign="end">
-          {status}
+        <Text fontWeight="bold" textAlign="end" whiteSpace="nowrap">
+          {`PRIVATE SALE - ${status}`}
         </Text>
         <Icon ml={2} as={FaQuestionCircle} onClick={onOpen} cursor="pointer" />
       </Flex>

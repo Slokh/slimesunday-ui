@@ -5,11 +5,13 @@ import { Display } from "@slimesunday/components/Display";
 import { Editor } from "@slimesunday/components/Editor";
 import { Menu } from "@slimesunday/components/Menu";
 import { EditorProvider } from "@slimesunday/context/editor";
-import { CONTRACT_ADDRESS } from "@slimesunday/utils";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => (
-  <EditorProvider contractAddress={CONTRACT_ADDRESS}>
+  <EditorProvider
+    contractAddress={"0xc64059967332B223d2d315ea96F46089c5eBd06A"}
+    allowlistEnabled={true}
+  >
     <Flex minH="100vh" w="full" bgColor="primary" direction="column">
       <Menu />
       <Flex flexGrow={1}>

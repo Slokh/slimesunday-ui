@@ -1,8 +1,5 @@
-import {
-  ABI,
-  CONTRACT_ADDRESS,
-  METADATA_CONTRACT_ADDRESS,
-} from "@slimesunday/utils";
+import { ABI, METADATA_CONTRACT_ADDRESS } from "@slimesunday/utils";
+import { findBestLeafForAddress, getProof } from "@slimesunday/utils/allowlist";
 import { BigNumber, ethers } from "ethers";
 import { hexZeroPad } from "ethers/lib/utils";
 import {
@@ -12,7 +9,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useAccount, useContract, useNetwork, useProvider } from "wagmi";
+import { useAccount, useContract, useProvider } from "wagmi";
 
 export enum LayerType {
   Background = "Background",
@@ -46,6 +43,10 @@ export enum EditorMode {
 }
 
 type State = {
+  contractAddress: string;
+  allowlistData: any;
+  allowlistEnabled: boolean;
+
   backgrounds: Layer[];
   portraits: Layer[];
   layers: Layer[];
@@ -73,15 +74,23 @@ type State = {
 };
 
 type EditorContextType = State | undefined;
-type EditorProviderProps = { children: ReactNode };
+type EditorProviderProps = {
+  contractAddress: string;
+  allowlistEnabled?: boolean;
+  children: ReactNode;
+};
 
 const EditorContext = createContext<EditorContextType>(undefined);
 
-export const EditorProvider = ({ children }: EditorProviderProps) => {
+export const EditorProvider = ({
+  contractAddress,
+  allowlistEnabled,
+  children,
+}: EditorProviderProps) => {
   const { address, isConnected } = useAccount();
   const provider = useProvider();
   const contract: ethers.Contract = useContract({
-    addressOrName: CONTRACT_ADDRESS,
+    addressOrName: contractAddress,
     contractInterface: ABI,
     signerOrProvider: provider,
   });
@@ -94,6 +103,27 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const [layers, setLayers] = useState<Layer[]>([]);
   const [active, setActive] = useState<BoundLayer>({ layers: [] });
   const [boundLayers, setBoundLayers] = useState<BoundLayer[]>([]);
+  const [allowlistData, setAllowlistData] = useState<any>([
+    undefined,
+    undefined,
+  ]);
+
+  useEffect(() => {
+    setAllowlistData([undefined, undefined]);
+    const fetchData = async () => {
+      if (address && contract) {
+        const minted = await contract.getNumberMintedForAddress(address);
+        const allowListLeaf = findBestLeafForAddress(address, minted);
+        if (allowListLeaf != null) {
+          setAllowlistData([allowListLeaf, getProof(allowListLeaf)]);
+        }
+      }
+    };
+    if (allowlistEnabled) {
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, contract]);
 
   const layersForType = (
     availableLayers: Layer[],
@@ -115,6 +145,16 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
 
   const processMetadata = async (metadata: any) => {
     const { tokenId, layerId, jsonString, isBound, isHidden } = metadata;
+    if (layerId === -1) {
+      return {
+        tokenId,
+        layerId,
+        name: "Unknown - Waiting For Reveal",
+        layerType: LayerType.Layer,
+        isDisabled: true,
+      };
+    }
+
     const { attributes } = JSON.parse(
       Buffer.from(
         jsonString.replace("data:application/json;base64,", ""),
@@ -155,11 +195,20 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
 
   const importLayers = async (tokenIds: number[]) => {
     const layers = await Promise.all(
-      tokenIds.map(async (tokenId: number) => ({
-        tokenId,
-        layerId: (await contract.getLayerId(tokenId)).toNumber(),
-        jsonString: await contract.tokenURI(tokenId),
-      }))
+      tokenIds.map(async (tokenId: number) => {
+        let layerId;
+        try {
+          layerId = (await contract.getLayerId(tokenId)).toNumber();
+        } catch (e) {
+          layerId = -1;
+        }
+
+        return {
+          tokenId,
+          layerId,
+          jsonString: await contract.tokenURI(tokenId),
+        };
+      })
     );
     setLayers(await Promise.all(layers.map(processMetadata)));
   };
@@ -326,7 +375,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   };
 
   const isBindingEnabled = () => {
-    if (!active.background || !active.portrait || active.layers.length < 4) {
+    if (!active.background || !active.portrait || active.layers.length < 6) {
       return false;
     }
 
@@ -346,6 +395,10 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   return (
     <EditorContext.Provider
       value={{
+        contractAddress,
+        allowlistData,
+        allowlistEnabled: !!allowlistEnabled,
+
         backgrounds: layersForType(
           layers,
           LayerType.Background,

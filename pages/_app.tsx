@@ -1,5 +1,4 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { EditorProvider } from "@slimesunday/context/editor";
 import theme from "@slimesunday/theme";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -35,9 +34,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         </Head>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider chains={chains}>
-            <EditorProvider>
-              <Component {...pageProps} />
-            </EditorProvider>
+            <Component {...pageProps} />
           </RainbowKitProvider>
         </WagmiConfig>
       </DndProvider>
