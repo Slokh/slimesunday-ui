@@ -78,7 +78,7 @@ export const MintPacksContent = () => {
 
 export const BindLayersContent = () => {
   const {
-    active: { background, portrait, layers },
+    active: { background, portrait, layers, tokenId },
     fetchLayers,
   } = useEditor();
 
@@ -88,10 +88,12 @@ export const BindLayersContent = () => {
     .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
-  const activeLayerIds = [
-    255,
-    ...finalLayers.filter((l) => !l.isHidden).map(({ layerId }) => layerId),
-  ];
+  let activeLayerIds = finalLayers
+    .filter((l) => !l.isHidden)
+    .map(({ layerId }) => layerId);
+  if (!tokenId) {
+    activeLayerIds = [255, ...activeLayerIds];
+  }
   let packedLayerIds = BigNumber.from(0);
   for (let i = 0; i < activeLayerIds.length; i++) {
     packedLayerIds = packedLayerIds.or(
@@ -107,8 +109,6 @@ export const BindLayersContent = () => {
   if (!layerTokenIds?.length) {
     functionAndArgs = ["setActiveLayers", [baseTokenId, packedLayerIds]];
   }
-
-  console.log(functionAndArgs);
 
   const icons = {
     Background: BsImage,
