@@ -3,7 +3,7 @@ import { BigNumber, ethers } from "ethers";
 import { keccak256 } from "@ethersproject/keccak256";
 import { lite } from "./allowlist_data";
 
-export const ALLOWLIST_START_TIME = new Date("2022-09-08 19:00:00 GMT");
+export const ALLOWLIST_START_TIME = new Date("2022-09-08 18:00:00 GMT");
 export const ALLOWLIST_END_TIME = new Date("2022-09-12 19:00:00 GMT");
 
 const ALLOWLIST_MINT_PRICE = BigNumber.from("95000000000000000");
