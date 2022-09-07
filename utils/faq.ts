@@ -26,7 +26,7 @@ export const faqs = [
 
   [
     "When can I mint my collage?",
-    "You can mint your collage as soon as you’d like after purchasing a SLIMESHOP Pack. Anyone who mints their collage by 2pm EST on September 15th will be eligible for additional rewards. ",
+    "You can mint your collage as soon as you'd like after purchasing a SLIMESHOP Pack.",
   ],
 
   [

@@ -1,6 +1,6 @@
 import { Flex, Icon, Spinner, Stack, Text } from "@chakra-ui/react";
 import { LayerType, useEditor } from "@slimesunday/context/editor";
-import { ABI, MINT_PRICE } from "@slimesunday/utils";
+import { ABI, CONTRACT_ADDRESS, MINT_PRICE } from "@slimesunday/utils";
 import { ALLOWLIST_END_TIME } from "@slimesunday/utils/allowlist";
 import { BigNumber, ethers } from "ethers";
 import { Interface } from "ethers/lib/utils";
@@ -32,10 +32,10 @@ export const MintPacksContent = () => {
     <TransactionContent
       heroText={`Mint a starter pack for ${MINT_PRICE} ETH to begin your collage!`}
       buttonText="Mint a pack"
-      functionName={isPublicMintEnabled ? "mintSet" : "mintAllowList"}
+      functionName={isPublicMintEnabled ? "mint" : "mintAllowList"}
       args={
         isPublicMintEnabled
-          ? []
+          ? [1]
           : isAllowListEnabled
           ? [
               BigNumber.from(1),
@@ -88,11 +88,14 @@ export const BindLayersContent = () => {
     .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
-  const activeLayers = finalLayers.filter((l) => !l.isHidden);
+  const activeLayerIds = [
+    255,
+    ...finalLayers.filter((l) => !l.isHidden).map(({ layerId }) => layerId),
+  ];
   let packedLayerIds = BigNumber.from(0);
-  for (let i = 0; i < activeLayers.length; i++) {
+  for (let i = 0; i < activeLayerIds.length; i++) {
     packedLayerIds = packedLayerIds.or(
-      BigNumber.from(activeLayers[i].layerId).shl(248 - i * 8)
+      BigNumber.from(activeLayerIds[i]).shl(248 - i * 8)
     );
   }
 
@@ -104,6 +107,8 @@ export const BindLayersContent = () => {
   if (!layerTokenIds?.length) {
     functionAndArgs = ["setActiveLayers", [baseTokenId, packedLayerIds]];
   }
+
+  console.log(functionAndArgs);
 
   const icons = {
     Background: BsImage,
@@ -173,9 +178,8 @@ export const TransactionContent = ({
   value?: BigNumber;
   children: React.ReactNode;
 }) => {
-  const { contractAddress } = useEditor();
   const contractWrite = useContractWrite({
-    addressOrName: contractAddress,
+    addressOrName: CONTRACT_ADDRESS,
     contractInterface: new Interface(ABI),
     functionName,
     args,

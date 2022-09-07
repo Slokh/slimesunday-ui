@@ -8,10 +8,7 @@ import { EditorProvider } from "@slimesunday/context/editor";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => (
-  <EditorProvider
-    contractAddress={"0xc64059967332B223d2d315ea96F46089c5eBd06A"}
-    allowlistEnabled={true}
-  >
+  <EditorProvider allowlistEnabled>
     <Flex minH="100vh" w="full" bgColor="primary" direction="column">
       <Menu />
       <Flex flexGrow={1}>

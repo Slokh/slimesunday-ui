@@ -171,7 +171,7 @@ export const ModalRouter = ({
                 <Spacer />
                 <OpenSeaLogo boxSize={6} />
               </Stack>
-              <Flex bgColor="primary" w="xl" h="sm">
+              <Flex bgColor="primary" w="xl" h="sm" borderBottomRightRadius={8}>
                 {modalType === ModalType.Backgrounds && (
                   <BackgroundsContent onClose={onClose} />
                 )}

@@ -1,7 +1,7 @@
-export const CONTRACT_ADDRESS = "0x6A2697beD007d0578dEA0235fbDF4bF0DB38e4B0";
+export const CONTRACT_ADDRESS = "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e";
 
 export const METADATA_CONTRACT_ADDRESS =
-  "0x5C0e87613120bbD6e40839f4897b90F7210D8f6b";
+  "0xaff53666eb1906576c3812dd8b05851677c1f32a";
 
 export const ABI = [
   "function mintSet() public payable",
@@ -12,13 +12,13 @@ export const ABI = [
   "function burnAndBindMultipleAndSetActiveLayers(uint256 baseTokenId, uint256[] calldata layerTokenIds, uint256 packedActiveLayerIds) public",
   "function getLayerId(uint256 tokenId) public view returns (uint256)",
   "function getBoundLayers(uint256 tokenId) external view returns (uint256[] memory)",
-  "function getTokenURI(uint256 layerId, uint256 bindings, uint256[] calldata activeLayers, bytes32 layerSeed) external view returns (string memory)",
+  "function getTokenURI(uint256 tokenId, uint256 layerId, uint256 bindings, uint256[] calldata activeLayers, bytes32 layerSeed) external view returns (string memory)",
   "function setActiveLayers(uint256 baseTokenId, uint256 packedLayerIds) external",
   "function getActiveLayers(uint256 tokenId) public view  returns (uint256[] memory)",
   "function getNumberMintedForAddress(address addr) public view returns (uint256)",
   "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
-  "event LayersBoundToToken(uint256 indexed tokenId, uint256 indexed boundLayersBitmap)",
+  "event LayersBoundToToken(address indexed owner, uint256 indexed tokenId, uint256 indexed boundLayersBitmap)",
 ];
 
 export const ALLOWLIST_MINT_PRICE = 0.095;
-export const MINT_PRICE = "0.15";
+export const MINT_PRICE = "0";

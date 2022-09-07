@@ -1,4 +1,8 @@
-import { ABI, METADATA_CONTRACT_ADDRESS } from "@slimesunday/utils";
+import {
+  ABI,
+  CONTRACT_ADDRESS,
+  METADATA_CONTRACT_ADDRESS,
+} from "@slimesunday/utils";
 import { findBestLeafForAddress, getProof } from "@slimesunday/utils/allowlist";
 import { BigNumber, ethers } from "ethers";
 import { hexZeroPad } from "ethers/lib/utils";
@@ -43,7 +47,6 @@ export enum EditorMode {
 }
 
 type State = {
-  contractAddress: string;
   allowlistData: any;
   allowlistEnabled: boolean;
 
@@ -75,7 +78,6 @@ type State = {
 
 type EditorContextType = State | undefined;
 type EditorProviderProps = {
-  contractAddress: string;
   allowlistEnabled?: boolean;
   children: ReactNode;
 };
@@ -83,14 +85,13 @@ type EditorProviderProps = {
 const EditorContext = createContext<EditorContextType>(undefined);
 
 export const EditorProvider = ({
-  contractAddress,
   allowlistEnabled,
   children,
 }: EditorProviderProps) => {
   const { address, isConnected } = useAccount();
   const provider = useProvider();
   const contract: ethers.Contract = useContract({
-    addressOrName: contractAddress,
+    addressOrName: CONTRACT_ADDRESS,
     contractInterface: ABI,
     signerOrProvider: provider,
   });
@@ -149,7 +150,7 @@ export const EditorProvider = ({
       return {
         tokenId,
         layerId,
-        name: "Unknown - Waiting For Reveal",
+        name: "Layer - Waiting For Reveal",
         layerType: LayerType.Layer,
         isDisabled: true,
       };
@@ -186,7 +187,7 @@ export const EditorProvider = ({
       layerType,
       isBound,
       isHidden: isHidden && layerType != LayerType.Portrait,
-      image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue.replace(
+      image: `https://opensea-slimesunday.s3.amazonaws.com/${layerType}/${nameValue.replaceAll(
         " ",
         "+"
       )}.png`,
@@ -234,6 +235,7 @@ export const EditorProvider = ({
             let layers = [];
             for (const layerId of layerIds) {
               const jsonString = await metadataContract.getTokenURI(
+                tokenId,
                 layerId,
                 0,
                 [],
@@ -288,13 +290,15 @@ export const EditorProvider = ({
     const tokenIdsOut = transfersOut.map(({ topics }) => parseInt(topics[3]));
 
     const bindEvents = await contract.queryFilter(
-      contract.filters.LayersBoundToToken()
+      contract.filters.LayersBoundToToken(address)
     );
-    const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[1]));
+    const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[2]));
 
-    const ownedTokenIds = tokenIdsIn.filter((id) => !tokenIdsOut.includes(id));
     const ownedBoundTokenIds = boundTokenIds.filter(
       (id) => tokenIdsIn.includes(id) && !tokenIdsOut.includes(id)
+    );
+    const ownedTokenIds = tokenIdsIn.filter(
+      (id) => !tokenIdsOut.includes(id) && !ownedBoundTokenIds.includes(id)
     );
 
     importLayers(ownedTokenIds);
@@ -395,7 +399,6 @@ export const EditorProvider = ({
   return (
     <EditorContext.Provider
       value={{
-        contractAddress,
         allowlistData,
         allowlistEnabled: !!allowlistEnabled,
 

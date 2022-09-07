@@ -51,7 +51,7 @@ export const Row = ({
 }) => (
   <Flex
     w="full"
-    h={16}
+    h={14}
     align="center"
     justify="space-between"
     cursor={isDraggable ? "move" : "default"}
