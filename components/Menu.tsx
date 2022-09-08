@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Flex,
   Image,
@@ -88,6 +89,15 @@ export const FAQ = ({ isOpen, onClose }: any) => (
               borderBottomLeftRadius={8}
             >
               <Stack overflowY="scroll" maxH="md" spacing={8} pt={8} pb={8}>
+                <AspectRatio maxH="400px">
+                  <iframe
+                    src="https://www.youtube.com/embed/1X074c0qGR0"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  />
+                </AspectRatio>
                 {faqs.map(([question, answer]) => (
                   <Flex key={question} direction="column">
                     <Text fontWeight="bold" fontSize="lg">
