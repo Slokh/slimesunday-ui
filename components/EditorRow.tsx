@@ -153,14 +153,17 @@ export const EditorRow = ({
     [EditorRowAction.Swap]: {
       icon: IoMdSwap,
       onClick: onOpen,
+      isDisabled: layer?.isBound,
     },
     [EditorRowAction.Delete]: {
       icon: IoMdClose,
       onClick: () => layer && removeLayer(layer),
+      isDisabled: layer?.isBound,
     },
     [EditorRowAction.Toggle]: {
       icon: layer?.isHidden ? BsFillEyeSlashFill : BsFillEyeFill,
       onClick: () => layer && toggleLayer(layer),
+      isDisabled: false,
     },
   };
 
@@ -180,9 +183,16 @@ export const EditorRow = ({
       </Stack>
       <Stack direction="row" spacing={0} pr={2}>
         {actions.map((action, i) => {
-          const { icon, onClick } = options[action];
+          const { icon, onClick, isDisabled } = options[action];
 
-          return <RowButton key={i} icon={icon} onClick={onClick} />;
+          return (
+            <RowButton
+              key={i}
+              icon={icon}
+              onClick={onClick}
+              isDisabled={isDisabled}
+            />
+          );
         })}
       </Stack>
       {modalType && (

@@ -1,9 +1,5 @@
-import {
-  ABI,
-  CONTRACT_ADDRESS,
-  METADATA_CONTRACT_ADDRESS,
-} from "@slimesunday/utils";
-import { findBestLeafForAddress, getProof } from "@slimesunday/utils/allowlist";
+import { ABI, ChainConfig, CHAIN_CONFIG } from "@slimesunday/utils";
+import { findBestLeafForAddress } from "@slimesunday/utils/allowlist";
 import { BigNumber, ethers } from "ethers";
 import { hexZeroPad } from "ethers/lib/utils";
 import {
@@ -13,7 +9,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useAccount, useContract, useProvider } from "wagmi";
+import { useAccount, useContract, useNetwork, useProvider } from "wagmi";
 
 export enum LayerType {
   Background = "Background",
@@ -48,7 +44,7 @@ export enum EditorMode {
 
 type State = {
   allowlistData: any;
-  allowlistEnabled: boolean;
+  chainConfig: ChainConfig;
 
   backgrounds: Layer[];
   portraits: Layer[];
@@ -58,7 +54,7 @@ type State = {
   boundLayers: BoundLayer[];
 
   clear: () => void;
-  shuffle: (all: boolean) => void;
+  shuffle: (all: boolean) => Promise<void>;
   fetchLayers: () => Promise<any>;
 
   addBackground: (layer: Layer) => void;
@@ -78,25 +74,35 @@ type State = {
 
 type EditorContextType = State | undefined;
 type EditorProviderProps = {
-  allowlistEnabled?: boolean;
   children: ReactNode;
 };
 
 const EditorContext = createContext<EditorContextType>(undefined);
 
-export const EditorProvider = ({
-  allowlistEnabled,
-  children,
-}: EditorProviderProps) => {
+export const EditorProvider = ({ children }: EditorProviderProps) => {
   const { address, isConnected } = useAccount();
   const provider = useProvider();
+  const { chain } = useNetwork();
+  const chainConfig =
+    chain && chain.id in CHAIN_CONFIG
+      ? CHAIN_CONFIG[chain.id]
+      : {
+          blockExplorer: "",
+          contractAddress: "",
+          metadataContractAddress: "",
+          allowlistMintPrice: BigNumber.from(0),
+          publicMintPrice: BigNumber.from(0),
+          saleStartTimestamp: 0,
+          signatureEndTimestamp: 0,
+        };
+
   const contract: ethers.Contract = useContract({
-    addressOrName: CONTRACT_ADDRESS,
+    addressOrName: chainConfig.contractAddress,
     contractInterface: ABI,
     signerOrProvider: provider,
   });
   const metadataContract = useContract({
-    addressOrName: METADATA_CONTRACT_ADDRESS,
+    addressOrName: chainConfig.metadataContractAddress,
     contractInterface: ABI,
     signerOrProvider: provider,
   });
@@ -114,15 +120,15 @@ export const EditorProvider = ({
     const fetchData = async () => {
       if (address && contract) {
         const minted = await contract.getNumberMintedForAddress(address);
-        const allowListLeaf = findBestLeafForAddress(address, minted);
-        if (allowListLeaf != null) {
-          setAllowlistData([allowListLeaf, getProof(allowListLeaf)]);
-        }
+        const { leaf, proof } = findBestLeafForAddress(
+          chainConfig,
+          address,
+          minted
+        );
+        setAllowlistData([leaf, proof]);
       }
     };
-    if (allowlistEnabled) {
-      fetchData();
-    }
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, contract]);
 
@@ -194,7 +200,7 @@ export const EditorProvider = ({
     };
   };
 
-  const importLayers = async (tokenIds: number[]) => {
+  const fetchUnboundLayers = async (tokenIds: number[]) => {
     const layers = await Promise.all(
       tokenIds.map(async (tokenId: number) => {
         let layerId;
@@ -211,70 +217,67 @@ export const EditorProvider = ({
         };
       })
     );
-    setLayers(await Promise.all(layers.map(processMetadata)));
+    return await Promise.all(layers.map(processMetadata));
   };
 
-  const importBoundLayers = async (tokenIds: number[]) => {
-    setBoundLayers(
-      await Promise.all(
-        tokenIds.map(async (tokenId: number) => {
-          const boundLayerIds = (await contract.getBoundLayers(tokenId)).map(
-            (id: BigNumber) => id.toNumber()
-          );
-          const activeLayerIds = (await contract.getActiveLayers(tokenId)).map(
-            (id: BigNumber) => id.toNumber()
-          );
-          const inactiveLayerIds = boundLayerIds.filter(
-            (id: number) => !activeLayerIds.includes(id)
-          );
+  const fetchBoundLayers = async (tokenIds: number[]) => {
+    return await Promise.all(
+      tokenIds.map(async (tokenId: number) => {
+        const boundLayerIds = (await contract.getBoundLayers(tokenId)).map(
+          (id: BigNumber) => id.toNumber()
+        );
+        const activeLayerIds = (await contract.getActiveLayers(tokenId)).map(
+          (id: BigNumber) => id.toNumber()
+        );
+        const inactiveLayerIds = boundLayerIds.filter(
+          (id: number) => !activeLayerIds.includes(id)
+        );
 
-          const handleLayerIds = async (
-            layerIds: number[],
-            isHidden: boolean
-          ) => {
-            let layers = [];
-            for (const layerId of layerIds) {
-              const jsonString = await metadataContract.getTokenURI(
+        const handleLayerIds = async (
+          layerIds: number[],
+          isHidden: boolean
+        ) => {
+          let layers = [];
+          for (const layerId of layerIds) {
+            const jsonString = await metadataContract.getTokenURI(
+              tokenId,
+              layerId,
+              0,
+              [],
+              hexZeroPad("0x1", 32)
+            );
+            layers.push(
+              await processMetadata({
                 tokenId,
+                jsonString,
                 layerId,
-                0,
-                [],
-                hexZeroPad("0x1", 32)
-              );
-              layers.push(
-                await processMetadata({
-                  tokenId,
-                  jsonString,
-                  layerId,
-                  isHidden,
-                  isBound: true,
-                })
-              );
-            }
-            return layers;
-          };
+                isHidden,
+                isBound: true,
+              })
+            );
+          }
+          return layers.reverse();
+        };
 
-          const layers = [
-            ...(await handleLayerIds(activeLayerIds, false)),
-            ...(await handleLayerIds(inactiveLayerIds, true)),
-          ];
+        const layers = [
+          ...(await handleLayerIds(activeLayerIds, false)),
+          ...(await handleLayerIds(inactiveLayerIds, true)),
+        ];
 
-          return {
-            tokenId,
-            background: layers?.find(
-              ({ layerType }) => layerType === LayerType.Background
-            ),
-            portrait: layers?.find(
-              ({ layerType }) => layerType === LayerType.Portrait
-            ),
-            layers: layers?.filter(
-              ({ layerType }) =>
-                layerType === LayerType.Layer ||
-                layerType === LayerType.Portrait
-            ),
-          };
-        })
-      )
+        return {
+          tokenId,
+          background: layers?.find(
+            ({ layerType }) => layerType === LayerType.Background
+          ),
+          portrait: layers?.find(
+            ({ layerType }) => layerType === LayerType.Portrait
+          ),
+          layers: layers?.filter(
+            ({ layerType }) =>
+              layerType === LayerType.Layer || layerType === LayerType.Portrait
+          ),
+        };
+      })
     );
   };
 
@@ -301,8 +304,23 @@ export const EditorProvider = ({
       (id) => !tokenIdsOut.includes(id) && !ownedBoundTokenIds.includes(id)
     );
 
-    importLayers(ownedTokenIds);
-    importBoundLayers(ownedBoundTokenIds);
+    setLayers(
+      await fetchUnboundLayers(
+        ownedTokenIds.filter((id, i) => ownedTokenIds.indexOf(id) === i)
+      )
+    );
+
+    const boundLayers = await fetchBoundLayers(
+      ownedBoundTokenIds.filter((id, i) => ownedBoundTokenIds.indexOf(id) === i)
+    );
+    setBoundLayers(boundLayers);
+
+    const boundLayer = boundLayers.find(
+      ({ tokenId }) => tokenId === active.tokenId
+    );
+    if (boundLayer) {
+      setActive({ ...boundLayer });
+    }
   };
 
   useEffect(() => {
@@ -331,7 +349,13 @@ export const EditorProvider = ({
       layersForType(availableLayers, LayerType.Portrait),
       1
     )[0];
-    const newLayers = r(layersForType(availableLayers, LayerType.Layer), 5);
+
+    const allAvailableLayers = layersForType(availableLayers, LayerType.Layer);
+    const dedupedAvailableLayers = allAvailableLayers.filter(
+      (l, i) =>
+        allAvailableLayers.findIndex((m) => m.layerId === l.layerId) === i
+    );
+    const newLayers = r(dedupedAvailableLayers, 5);
     const portraitIndex = Math.floor(Math.random() * newLayers.length);
 
     setActive({
@@ -379,7 +403,7 @@ export const EditorProvider = ({
   };
 
   const isBindingEnabled = () => {
-    if (!active.background || !active.portrait || active.layers.length < 6) {
+    if (!active.background || !active.portrait || active.layers.length < 2) {
       return false;
     }
 
@@ -400,7 +424,7 @@ export const EditorProvider = ({
     <EditorContext.Provider
       value={{
         allowlistData,
-        allowlistEnabled: !!allowlistEnabled,
+        chainConfig,
 
         backgrounds: layersForType(
           layers,

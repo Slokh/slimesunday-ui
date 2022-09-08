@@ -1,7 +1,7 @@
-export const CONTRACT_ADDRESS = "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e";
+import { BigNumber } from "ethers";
 
-export const METADATA_CONTRACT_ADDRESS =
-  "0xaff53666eb1906576c3812dd8b05851677c1f32a";
+export const GALLERY_LINK =
+  "https://testnets.opensea.io/collection/slimeshop-bind";
 
 export const ABI = [
   "function mintSet() public payable",
@@ -20,5 +20,35 @@ export const ABI = [
   "event LayersBoundToToken(address indexed owner, uint256 indexed tokenId, uint256 indexed boundLayersBitmap)",
 ];
 
-export const ALLOWLIST_MINT_PRICE = 0.095;
-export const MINT_PRICE = "0";
+export interface ChainConfig {
+  blockExplorer: string;
+  contractAddress: string;
+  metadataContractAddress: string;
+  publicMintPrice: BigNumber;
+  allowlistMintPrice: BigNumber;
+  saleStartTimestamp: number;
+  signatureEndTimestamp: number;
+}
+
+export const CHAIN_CONFIG: {
+  [key: number]: ChainConfig;
+} = {
+  1: {
+    blockExplorer: "https://etherscan.io",
+    contractAddress: "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e",
+    metadataContractAddress: "0xaff53666eb1906576c3812dd8b05851677c1f32a",
+    publicMintPrice: BigNumber.from("150000000000000000"),
+    allowlistMintPrice: BigNumber.from("95000000000000000"),
+    saleStartTimestamp: 1663264800,
+    signatureEndTimestamp: 1663264800,
+  },
+  4: {
+    blockExplorer: "https://rinkeby.etherscan.io",
+    contractAddress: "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e",
+    metadataContractAddress: "0xaff53666eb1906576c3812dd8b05851677c1f32a",
+    publicMintPrice: BigNumber.from("0"),
+    allowlistMintPrice: BigNumber.from("95000000000000000"),
+    saleStartTimestamp: 0,
+    signatureEndTimestamp: 0,
+  },
+};

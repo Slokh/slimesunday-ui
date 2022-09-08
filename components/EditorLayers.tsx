@@ -1,7 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { Layer, LayerType, useEditor } from "@slimesunday/context/editor";
-import update from "immutability-helper";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ModalType } from "./Modal";
 

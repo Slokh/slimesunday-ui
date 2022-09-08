@@ -13,6 +13,7 @@ import { ModalType } from "./Modal";
 import { EditorLayers } from "./EditorLayers";
 import { DefaultRow, EditorRow, EditorRowAction, ModalRow } from "./EditorRow";
 import { FAQ, OpenSeaLogo } from "./Menu";
+import { GALLERY_LINK } from "@slimesunday/utils";
 
 const EditorStep = ({
   number,
@@ -81,7 +82,7 @@ export const Editor = () => {
           borderColor="secondary"
           divider={<StackDivider />}
         >
-          <ModalRow modalType={ModalType.MintPacks}>New...</ModalRow>
+          <ModalRow modalType={ModalType.MintPacks}>Mint</ModalRow>
           <ModalRow
             modalType={ModalType.Wallet}
             isDisabled={!isExistingEnabled}
@@ -190,11 +191,7 @@ export const Editor = () => {
       >
         <DefaultRow onClick={onOpen}>FAQ</DefaultRow>
         <DefaultRow>
-          <Link
-            href="https://testnets.opensea.io/collection/test-r8wu178kdo?search[numericTraits][0][name]=Layer%20Count&search[numericTraits][0][ranges][0][min]=7&search[numericTraits][0][ranges][0][max]=7&search[sortAscending]=true&search[sortBy]=UNIT_PRICE"
-            _hover={{}}
-            isExternal
-          >
+          <Link href={GALLERY_LINK} _hover={{}} isExternal>
             <Flex align="center">
               <OpenSeaLogo pr={1} boxSize={5} />
               GALLERY

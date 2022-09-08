@@ -1,7 +1,6 @@
 import {
   Box,
   Flex,
-  Icon,
   Image,
   Modal,
   ModalBody,
@@ -10,12 +9,10 @@ import {
   Spacer,
   Stack,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { ALLOWLIST_START_TIME } from "@slimesunday/utils/allowlist";
+import { useEditor } from "@slimesunday/context/editor";
 import { faqs } from "@slimesunday/utils/faq";
 import { useEffect, useState } from "react";
-import { FaQuestionCircle } from "react-icons/fa";
 
 export const MacButtons = (props: any) => (
   <Stack direction="row" spacing={2} {...props}>
@@ -40,8 +37,10 @@ export const OpenSeaLogo = (props: any) => {
   );
 };
 
-export const getStatus = () => {
-  let difference = +ALLOWLIST_START_TIME - +new Date();
+export const getStatus = (endTime: number) => {
+  console.log(endTime);
+  let difference = +new Date(endTime * 1000) - +new Date();
+  console.log(difference);
 
   if (difference > 0) {
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -109,11 +108,12 @@ export const FAQ = ({ isOpen, onClose }: any) => (
 );
 
 export const Menu = () => {
+  const { chainConfig } = useEditor();
   const [status, setStatus] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setStatus(getStatus());
+      setStatus(getStatus(chainConfig.signatureEndTimestamp));
     }, 1000);
 
     return () => clearTimeout(timer);
@@ -136,7 +136,7 @@ export const Menu = () => {
       <Text fontWeight="bold">SLIMESHOP</Text>
       <Flex align="center">
         <Text fontWeight="bold" textAlign="end" whiteSpace="nowrap">
-          {`PRIVATE SALE - ${status}`}
+          {`${status}`}
         </Text>
       </Flex>
     </Flex>

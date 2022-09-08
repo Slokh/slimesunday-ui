@@ -18,6 +18,7 @@ import {
   Menu,
   OpenSeaLogo,
 } from "@slimesunday/components/Menu";
+import { CHAIN_CONFIG } from "@slimesunday/utils";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 
@@ -39,7 +40,7 @@ const TempHome: NextPage = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setStatus(getStatus());
+      setStatus(getStatus(CHAIN_CONFIG[1].saleStartTimestamp));
     }, 1000);
 
     return () => clearTimeout(timer);

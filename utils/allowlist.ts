@@ -2,30 +2,7 @@ import { MerkleTree } from "merkletreejs";
 import { BigNumber, ethers } from "ethers";
 import { keccak256 } from "@ethersproject/keccak256";
 import { lite } from "./allowlist_data";
-
-export const ALLOWLIST_START_TIME = new Date("2022-09-08 18:00:00 GMT");
-export const ALLOWLIST_END_TIME = new Date("2022-09-12 19:00:00 GMT");
-
-const ALLOWLIST_MINT_PRICE = BigNumber.from("95000000000000000");
-const PUBLIC_MINT_PRICE = BigNumber.from("150000000000000000");
-const RINKEBY_START_TIME = BigNumber.from(1662421847);
-
-const liteLeaves: string[] = lite;
-let leaves: ILeaf[] = [];
-for (let leaf of liteLeaves) {
-  leaves.push({
-    address: leaf.toLowerCase(),
-    mintPrice: ALLOWLIST_MINT_PRICE,
-    maxMintedSetsForWallet: BigNumber.from(5),
-    startTime: BigNumber.from(RINKEBY_START_TIME),
-  });
-  leaves.push({
-    address: leaf.toLowerCase(),
-    mintPrice: PUBLIC_MINT_PRICE,
-    maxMintedSetsForWallet: BigNumber.from(10),
-    startTime: BigNumber.from(RINKEBY_START_TIME),
-  });
-}
+import { ChainConfig } from ".";
 
 interface ILeaf {
   address: string;
@@ -34,30 +11,51 @@ interface ILeaf {
   startTime: BigNumber;
 }
 
-function hashLeaf(leaf: ILeaf) {
-  // equiv to keccak(abi.encodePacked(address,mintPrice,maxMintedSetsForWallet,startTime))
-  return ethers.utils.solidityKeccak256(
-    ["address", "uint256", "uint256", "uint256"],
-    [leaf.address, leaf.mintPrice, leaf.maxMintedSetsForWallet, leaf.startTime]
-  );
-}
-
-const hashedLeaves = leaves.map(hashLeaf);
-
-const merkletree = new MerkleTree(hashedLeaves, keccak256, {
-  sort: true,
-  sortLeaves: true,
-  hashLeaves: false,
-});
-
-export function getProof(leaf: ILeaf) {
-  return merkletree.getHexProof(hashLeaf(leaf));
-}
-
 export function findBestLeafForAddress(
+  chainConfig: ChainConfig,
   address: string,
   minted: BigNumber
-): ILeaf | null {
+): {
+  leaf?: ILeaf;
+  proof?: string[];
+} {
+  const liteLeaves: string[] = lite;
+  let leaves: ILeaf[] = [];
+  for (let leaf of liteLeaves) {
+    leaves.push({
+      address: leaf.toLowerCase(),
+      mintPrice: chainConfig.allowlistMintPrice,
+      maxMintedSetsForWallet: BigNumber.from(5),
+      startTime: BigNumber.from(chainConfig.saleStartTimestamp),
+    });
+    leaves.push({
+      address: leaf.toLowerCase(),
+      mintPrice: chainConfig.publicMintPrice,
+      maxMintedSetsForWallet: BigNumber.from(10),
+      startTime: BigNumber.from(chainConfig.saleStartTimestamp),
+    });
+  }
+
+  function hashLeaf(leaf: ILeaf) {
+    // equiv to keccak(abi.encodePacked(address,mintPrice,maxMintedSetsForWallet,startTime))
+    return ethers.utils.solidityKeccak256(
+      ["address", "uint256", "uint256", "uint256"],
+      [
+        leaf.address,
+        leaf.mintPrice,
+        leaf.maxMintedSetsForWallet,
+        leaf.startTime,
+      ]
+    );
+  }
+
+  const hashedLeaves = leaves.map(hashLeaf);
+
+  const merkletree = new MerkleTree(hashedLeaves, keccak256, {
+    sort: true,
+    sortLeaves: true,
+    hashLeaves: false,
+  });
   // filter out all inactive leaves
   const activeLeaves: ILeaf[] = leaves.filter((leaf) =>
     // js timestamps are in milliseconds
@@ -76,7 +74,7 @@ export function findBestLeafForAddress(
   );
   // if no leaves are found, return null
   if (eligibleAddressLeaves.length === 0) {
-    return null;
+    return {};
   }
 
   // find the eligible leaf with the best mint price for the user
@@ -86,5 +84,8 @@ export function findBestLeafForAddress(
       best = leaf;
     }
   }
-  return best;
+  return {
+    leaf: best || undefined,
+    proof: best ? merkletree.getHexProof(hashLeaf(best)) : undefined,
+  };
 }
