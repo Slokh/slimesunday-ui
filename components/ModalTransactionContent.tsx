@@ -131,7 +131,6 @@ export const BindLayersContent = () => {
   if (!tokenId && Date.now() / 1000 < chainConfig.signatureEndTimestamp) {
     activeLayerIds = [...activeLayerIds, 255];
   }
-  console.log(activeLayerIds, layerTokenIds);
   let packedLayerIds = BigNumber.from(0);
   for (let i = 0; i < activeLayerIds.length; i++) {
     packedLayerIds = packedLayerIds.or(
