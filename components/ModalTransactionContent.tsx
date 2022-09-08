@@ -52,8 +52,8 @@ export const MintPacksContent = () => {
       }
       value={
         isAllowlisted
-          ? chainConfig.allowlistMintPrice
-          : chainConfig.publicMintPrice
+          ? chainConfig.allowlistMintPrice.mul(numberOfPacks)
+          : chainConfig.publicMintPrice.mul(numberOfPacks)
       }
       onSuccess={async () => {
         await fetchLayers();

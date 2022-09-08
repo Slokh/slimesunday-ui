@@ -54,9 +54,9 @@ export const CHAIN_CONFIG: {
     metadataContractAddress: "0xff57fab3bb16203b4951502e6aa524b16fabca47",
     publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
-    saleStartTimestamp: 1662632144,
+    saleStartTimestamp: 0,
     signatureEndTimestamp: 1662652800,
-    allowlist: [],
+    allowlist: rinkebyAllowlist,
     mintingDisabled: false,
   },
 };
