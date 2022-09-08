@@ -55,6 +55,7 @@ export function findBestLeafForAddress(
     sortLeaves: true,
     hashLeaves: false,
   });
+
   // filter out all inactive leaves
   const activeLeaves: ILeaf[] = leaves.filter((leaf) =>
     // js timestamps are in milliseconds
