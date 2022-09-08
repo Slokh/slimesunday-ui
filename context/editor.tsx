@@ -116,6 +116,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const [allowlistData, setAllowlistData] = useState<any>([
     undefined,
     undefined,
+    undefined,
   ]);
 
   useEffect(() => {
@@ -126,9 +127,9 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         const { leaf, proof } = findBestLeafForAddress(
           chainConfig,
           address,
-          minted
+          minted.div(7)
         );
-        setAllowlistData([leaf, proof]);
+        setAllowlistData([leaf, proof, 5 - minted.div(7)]);
       }
     };
     fetchData();

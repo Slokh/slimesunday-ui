@@ -87,7 +87,7 @@ export const FAQ = ({ isOpen, onClose }: any) => (
               borderBottomRightRadius={8}
               borderBottomLeftRadius={8}
             >
-              <Stack overflowY="scroll" maxH="2xl" spacing={8} pt={8} pb={8}>
+              <Stack overflowY="scroll" maxH="md" spacing={8} pt={8} pb={8}>
                 {faqs.map(([question, answer]) => (
                   <Flex key={question} direction="column">
                     <Text fontWeight="bold" fontSize="lg">

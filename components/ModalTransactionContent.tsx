@@ -25,14 +25,14 @@ import { Display } from "./Display";
 export const MintPacksContent = () => {
   const [numberOfPacks, setNumberOfPacks] = useState(1);
   const {
-    allowlistData: [leaf, proof],
+    allowlistData: [leaf, proof, maxMintable],
     chainConfig,
     shuffle,
     fetchLayers,
   } = useEditor();
 
   const isMintEnabled = Date.now() >= chainConfig.saleStartTimestamp;
-  const isAllowlisted = !!proof && !!leaf;
+  const isAllowlisted = !!proof && !!leaf && maxMintable > 0;
 
   return (
     <TransactionContent
@@ -88,7 +88,7 @@ export const MintPacksContent = () => {
         <Slider
           defaultValue={1}
           min={1}
-          max={5}
+          max={maxMintable}
           step={1}
           onChange={(val) => setNumberOfPacks(val)}
         >
@@ -97,9 +97,9 @@ export const MintPacksContent = () => {
             <SliderFilledTrack bg="black" />
           </SliderTrack>
           <SliderThumb boxSize={6} />
-          {[1, 2, 3, 4, 5].map((value) => (
-            <SliderMark key={value} value={value} pt={4}>
-              {value}
+          {Array.from(Array(maxMintable).keys()).map((value) => (
+            <SliderMark key={value} value={value + 1} pt={4}>
+              {value + 1}
             </SliderMark>
           ))}
         </Slider>
