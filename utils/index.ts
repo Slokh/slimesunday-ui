@@ -55,7 +55,7 @@ export const CHAIN_CONFIG: {
     publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
     saleStartTimestamp: 0,
-    signatureEndTimestamp: 1662652800,
+    signatureEndTimestamp: 1662852800,
     allowlist: rinkebyAllowlist,
     mintingDisabled: false,
   },
