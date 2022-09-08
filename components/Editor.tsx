@@ -7,7 +7,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ModalType } from "./Modal";
 
 import { EditorLayers } from "./EditorLayers";
@@ -59,6 +59,22 @@ export const Editor = () => {
     isBindingEnabled,
     isExistingEnabled,
   } = useEditor();
+  const [time, setTime] = useState(Date.now() / 1000);
+  const [saleOpen, setIsOpen] = useState(
+    Date.now() / 1000 >= chainConfig.saleStartTimestamp
+  );
+
+  useEffect(() => {
+    if (!saleOpen) {
+      const timer = setTimeout(() => {
+        setTime(Date.now() / 1000);
+        setIsOpen(Date.now() / 1000 >= chainConfig.saleStartTimestamp);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time]);
 
   useEffect(() => {
     if (!localStorage.getItem("visited")) {
@@ -97,10 +113,7 @@ export const Editor = () => {
               </Link>
             </DefaultRow>
           ) : (
-            <ModalRow
-              modalType={ModalType.MintPacks}
-              isDisabled={Date.now() / 1000 < chainConfig.saleStartTimestamp}
-            >
+            <ModalRow modalType={ModalType.MintPacks} isDisabled={!saleOpen}>
               Mint
             </ModalRow>
           )}

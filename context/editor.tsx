@@ -93,7 +93,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
           metadataContractAddress: "",
           allowlistMintPrice: BigNumber.from(0),
           publicMintPrice: BigNumber.from(0),
-          saleStartTimestamp: 10000000000000,
+          saleStartTimestamp: 0,
           signatureEndTimestamp: 10000000000000,
           allowlist: [],
           mintingDisabled: false,

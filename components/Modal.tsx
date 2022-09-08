@@ -12,10 +12,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useEditor } from "@slimesunday/context/editor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsImage, BsLayers, BsPersonFill, BsStarFill } from "react-icons/bs";
 import { FaFolderOpen } from "react-icons/fa";
-import { FiPackage, FiShoppingCart } from "react-icons/fi";
+import { FiPackage } from "react-icons/fi";
 import { MacButtons, OpenSeaLogo } from "./Menu";
 import {
   BackgroundsContent,
@@ -70,6 +70,7 @@ const ModalOption = ({
           whiteSpace="nowrap"
           _hover={{}}
           _focus={{}}
+          outline="none"
         >
           {text}
         </Link>
@@ -105,6 +106,22 @@ export const ModalRouter = ({
     isBindingEnabled,
   } = useEditor();
   const [modalType, setModalType] = useState(initialModalType);
+  const [time, setTime] = useState(Date.now() / 1000);
+  const [saleOpen, setIsOpen] = useState(
+    Date.now() / 1000 >= chainConfig.saleStartTimestamp
+  );
+
+  useEffect(() => {
+    if (!saleOpen) {
+      const timer = setTimeout(() => {
+        setTime(Date.now() / 1000);
+        setIsOpen(Date.now() / 1000 >= chainConfig.saleStartTimestamp);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time]);
 
   const primaryOptionGroup = [
     {
@@ -139,9 +156,7 @@ export const ModalRouter = ({
       text: "Mint packs",
       onClick: () => setModalType(ModalType.MintPacks),
       isActive: modalType === ModalType.MintPacks,
-      isDisabled:
-        chainConfig.mintingDisabled ||
-        Date.now() / 1000 < chainConfig.saleStartTimestamp,
+      isDisabled: chainConfig.mintingDisabled || !saleOpen,
     },
     {
       icon: BsStarFill,
@@ -153,7 +168,6 @@ export const ModalRouter = ({
     {
       icon: OpenSeaLogo,
       text: "Buy layers",
-      isDisabled: Date.now() / 1000 < chainConfig.saleStartTimestamp,
     },
   ];
 

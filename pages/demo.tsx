@@ -25,7 +25,9 @@ import { useEffect, useState } from "react";
 const CountdownModal = () => {
   const { chainConfig } = useEditor();
   const [status, setStatus] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(
+    Date.now() / 1000 < chainConfig.saleStartTimestamp
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
