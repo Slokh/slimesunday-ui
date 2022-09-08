@@ -68,7 +68,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
       maxH="inherit"
       direction="column"
       bgColor="primary"
-      w={80}
+      w={{ base: "full", md: 80 }}
       borderRightColor="secondary"
       borderRightWidth={1}
       fontSize="sm"
@@ -111,7 +111,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
       bgColor="secondary"
       justify="center"
       align="center"
-      w={72}
+      w={{ base: "full", md: 72 }}
       borderBottomRightRadius={8}
     >
       {selectedFile?.layerId >= 0 && (
@@ -162,7 +162,7 @@ export const WalletContent = ({ onClose }: { onClose: any }) => {
         maxH="inherit"
         direction="column"
         bgColor="primary"
-        w={80}
+        w={{ base: "full", md: 80 }}
         borderRightColor="secondary"
         borderRightWidth={1}
         fontSize="sm"
@@ -197,7 +197,7 @@ export const WalletContent = ({ onClose }: { onClose: any }) => {
         bgColor="secondary"
         justify="center"
         align="center"
-        w={72}
+        w={{ base: "full", md: 72 }}
         borderBottomRightRadius={8}
       >
         <Display boundLayer={selected} width="200px" height="250px" />

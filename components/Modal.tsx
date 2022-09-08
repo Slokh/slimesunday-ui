@@ -176,12 +176,17 @@ export const ModalRouter = ({
       <ModalOverlay />
       <ModalContent bgColor="transparent" maxW="3xl">
         <ModalBody p={0} m={0}>
-          <Flex cursor="default" userSelect="none">
+          <Flex
+            cursor="default"
+            userSelect="none"
+            direction={{ base: "column", md: "row" }}
+          >
             <Stack
               bgColor="primary"
               w="full"
               borderTopLeftRadius={8}
-              borderBottomLeftRadius={8}
+              borderBottomLeftRadius={{ base: 0, md: 8 }}
+              borderTopRightRadius={{ base: 8, md: 0 }}
               borderRightColor="secondary"
               borderRightWidth={1}
               fontWeight="medium"
@@ -208,9 +213,10 @@ export const ModalRouter = ({
                 bgColor="primary"
                 w="full"
                 align="center"
-                borderTopRightRadius={8}
-                borderBottomColor="secondary"
+                borderTopRightRadius={{ base: 0, md: 8 }}
+                borderColor="secondary"
                 borderBottomWidth={1}
+                borderTopWidth={{ base: 1, md: 0 }}
                 p={4}
               >
                 <Text fontWeight="bold" fontSize="md">
@@ -219,7 +225,13 @@ export const ModalRouter = ({
                 <Spacer />
                 <OpenSeaLogo boxSize={6} />
               </Stack>
-              <Flex bgColor="primary" w="xl" h="sm" borderBottomRightRadius={8}>
+              <Flex
+                bgColor="primary"
+                w={{ base: "full", md: "xl" }}
+                h={{ base: "full", md: "sm" }}
+                borderBottomRightRadius={8}
+                direction={{ base: "column", md: "row" }}
+              >
                 {modalType === ModalType.Backgrounds && (
                   <BackgroundsContent onClose={onClose} />
                 )}

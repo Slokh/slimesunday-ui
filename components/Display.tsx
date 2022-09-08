@@ -22,11 +22,12 @@ export const Display = ({
       justify="center"
       align="center"
       bgColor={width || height ? "" : "secondary"}
+      h={{ base: "400px", md: "auto" }}
     >
       <Flex
         position="relative"
-        w={width || "500px"}
-        h={height || "625px"}
+        w={{ base: width || "300px", md: width || "500px" }}
+        h={{ base: height || "375px", md: height || "625px" }}
         justify="center"
         align="center"
         bgColor="tertiary"

@@ -91,9 +91,14 @@ const Home: NextPage = () => (
   <EditorProvider>
     <Flex minH="100vh" w="full" bgColor="primary" direction="column">
       <Menu />
-      <Flex flexGrow={1}>
+      <Flex flexGrow={1} direction={{ base: "column", md: "row" }}>
         <Display />
-        <Flex direction="column" h="full" w={96} userSelect="none">
+        <Flex
+          direction="column"
+          h="full"
+          w={{ base: "full", md: 96 }}
+          userSelect="none"
+        >
           <ConnectButton />
           <Editor />
         </Flex>

@@ -61,7 +61,7 @@ export const MintPacksContent = () => {
       }}
       isDisabled={!isMintEnabled}
     >
-      <Stack spacing={8}>
+      <Stack spacing={8} h={{ base: "xs", md: "auto" }} justify="center">
         <Stack
           direction="row"
           spacing={8}
@@ -166,13 +166,15 @@ export const BindLayersContent = () => {
         chainConfig.saleStartTimestamp === 0 ? "testnets." : ""
       }opensea.io/assets/${chainConfig.contractAddress}/${baseTokenId}`}
     >
-      <Flex w="full" justify="center" pl={8} pr={8}>
-        <Display height="200px" width="160px" />
+      <Flex direction="column" h={{ base: "md", md: "auto" }}>
+        <Flex w="full" justify="center" pl={8} pr={8}>
+          <Display height={"200px"} width="160px" />
+        </Flex>
+        <Text fontWeight="bold" color="red">
+          <Icon as={IoMdWarning} />
+          WARNING: This action is irreversible.
+        </Text>
       </Flex>
-      <Text fontWeight="bold" color="red">
-        <Icon as={IoMdWarning} />
-        WARNING: This action is irreversible.
-      </Text>
     </TransactionContent>
   );
 };
