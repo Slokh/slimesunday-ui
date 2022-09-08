@@ -50,7 +50,7 @@ export const CHAIN_CONFIG: {
   4: {
     blockExplorerUrl: "https://rinkeby.etherscan.io",
     openseaUrl: "https://testnets.opensea.io",
-    contractAddress: "0xa48aCae609D8d7ECBD03DE106fDd4FC7126C5281",
+    contractAddress: "0x964Ec3910B49ca98E7B451e876653CC32212b03E",
     metadataContractAddress: "0xff57fab3bb16203b4951502e6aa524b16fabca47",
     publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),

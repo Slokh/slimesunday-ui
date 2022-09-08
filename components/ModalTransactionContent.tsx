@@ -120,17 +120,18 @@ export const BindLayersContent = () => {
     ? [background, ...reversedLayers]
     : reversedLayers;
   const baseTokenId = portrait?.tokenId;
-  let layerTokenIds = finalLayers
+  const layerTokenIds = finalLayers
     .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
   let activeLayerIds = finalLayers
     .filter((l) => !l.isHidden)
     .map(({ layerId }) => layerId);
-  if (!tokenId && Date.now() < chainConfig.signatureEndTimestamp) {
-    activeLayerIds = [255, ...activeLayerIds];
-    layerTokenIds = [255, ...layerTokenIds];
+
+  if (!tokenId && Date.now() / 1000 < chainConfig.signatureEndTimestamp) {
+    activeLayerIds = [...activeLayerIds, 255];
   }
+  console.log(activeLayerIds, layerTokenIds);
   let packedLayerIds = BigNumber.from(0);
   for (let i = 0; i < activeLayerIds.length; i++) {
     packedLayerIds = packedLayerIds.or(

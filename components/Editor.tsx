@@ -233,7 +233,7 @@ export const Editor = () => {
         <DefaultRow onClick={onOpen}>FAQ</DefaultRow>
         <DefaultRow>
           <Link
-            href={`${chainConfig.openseaUrl}/collection/slimeshop-bind`}
+            href={`https://opensea.io/collection/slimeshop-bind`}
             _hover={{}}
             isExternal
           >
