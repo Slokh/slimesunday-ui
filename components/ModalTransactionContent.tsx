@@ -120,7 +120,7 @@ export const BindLayersContent = () => {
     ? [background, ...reversedLayers]
     : reversedLayers;
   const baseTokenId = portrait?.tokenId;
-  const layerTokenIds = finalLayers
+  let layerTokenIds = finalLayers
     .filter((l) => l.layerType !== LayerType.Portrait && !l.isBound)
     .map((l) => l.tokenId);
 
@@ -129,6 +129,7 @@ export const BindLayersContent = () => {
     .map(({ layerId }) => layerId);
   if (!tokenId && Date.now() < chainConfig.signatureEndTimestamp) {
     activeLayerIds = [255, ...activeLayerIds];
+    layerTokenIds = [255, ...layerTokenIds];
   }
   let packedLayerIds = BigNumber.from(0);
   for (let i = 0; i < activeLayerIds.length; i++) {

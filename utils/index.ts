@@ -50,13 +50,13 @@ export const CHAIN_CONFIG: {
   4: {
     blockExplorerUrl: "https://rinkeby.etherscan.io",
     openseaUrl: "https://testnets.opensea.io",
-    contractAddress: "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e",
-    metadataContractAddress: "0xaff53666eb1906576c3812dd8b05851677c1f32a",
+    contractAddress: "0xa48aCae609D8d7ECBD03DE106fDd4FC7126C5281",
+    metadataContractAddress: "0xff57fab3bb16203b4951502e6aa524b16fabca47",
     publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
     saleStartTimestamp: 1662632144,
-    signatureEndTimestamp: 1662646544,
-    allowlist: rinkebyAllowlist,
+    signatureEndTimestamp: 1662652800,
+    allowlist: [],
     mintingDisabled: false,
   },
 };
