@@ -38,9 +38,7 @@ export const OpenSeaLogo = (props: any) => {
 };
 
 export const getStatus = (endTime: number) => {
-  console.log(endTime);
   let difference = +new Date(endTime * 1000) - +new Date();
-  console.log(difference);
 
   if (difference > 0) {
     const days = Math.floor(difference / (1000 * 60 * 60 * 24));

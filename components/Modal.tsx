@@ -2,6 +2,7 @@ import {
   Divider,
   Flex,
   Icon,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,7 +15,7 @@ import { useEditor } from "@slimesunday/context/editor";
 import { useState } from "react";
 import { BsImage, BsLayers, BsPersonFill, BsStarFill } from "react-icons/bs";
 import { FaFolderOpen } from "react-icons/fa";
-import { FiPackage } from "react-icons/fi";
+import { FiPackage, FiShoppingCart } from "react-icons/fi";
 import { MacButtons, OpenSeaLogo } from "./Menu";
 import {
   BackgroundsContent,
@@ -36,27 +37,46 @@ const ModalOption = ({
   onClick: any;
   isActive?: boolean;
   isDisabled?: boolean;
-}) => (
-  <Flex
-    align="center"
-    onClick={isDisabled ? () => {} : onClick}
-    cursor={isDisabled ? "default" : "pointer"}
-  >
-    <Icon
-      as={icon}
-      boxSize={4}
-      color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
-    />
-    <Text
-      color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
-      pl={1}
-      fontWeight={isActive ? "bold" : "medium"}
-      whiteSpace="nowrap"
+}) => {
+  const { chainConfig } = useEditor();
+
+  return (
+    <Flex
+      align="center"
+      onClick={isDisabled ? () => {} : onClick}
+      cursor={isDisabled ? "default" : "pointer"}
     >
-      {text}
-    </Text>
-  </Flex>
-);
+      <Icon
+        as={icon}
+        boxSize={4}
+        color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
+      />
+      {onClick ? (
+        <Text
+          color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
+          pl={1}
+          fontWeight={isActive ? "bold" : "medium"}
+          whiteSpace="nowrap"
+        >
+          {text}
+        </Text>
+      ) : (
+        <Link
+          href={`${chainConfig.openseaUrl}/collection/slimeshop-layers`}
+          isExternal
+          color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
+          pl={1}
+          fontWeight={isActive ? "bold" : "medium"}
+          whiteSpace="nowrap"
+          _hover={{}}
+          _focus={{}}
+        >
+          {text}
+        </Link>
+      )}
+    </Flex>
+  );
+};
 
 export enum ModalType {
   Backgrounds = "Backgrounds",
@@ -76,8 +96,14 @@ export const ModalRouter = ({
   onClose: () => void;
   initialModalType: ModalType;
 }) => {
-  const { backgrounds, portraits, layers, boundLayers, isBindingEnabled } =
-    useEditor();
+  const {
+    chainConfig,
+    backgrounds,
+    portraits,
+    layers,
+    boundLayers,
+    isBindingEnabled,
+  } = useEditor();
   const [modalType, setModalType] = useState(initialModalType);
 
   const primaryOptionGroup = [
@@ -113,6 +139,9 @@ export const ModalRouter = ({
       text: "Mint packs",
       onClick: () => setModalType(ModalType.MintPacks),
       isActive: modalType === ModalType.MintPacks,
+      isDisabled:
+        chainConfig.mintingDisabled ||
+        Date.now() / 1000 < chainConfig.saleStartTimestamp,
     },
     {
       icon: BsStarFill,
@@ -120,6 +149,11 @@ export const ModalRouter = ({
       onClick: () => setModalType(ModalType.BindLayers),
       isDisabled: !isBindingEnabled,
       isActive: modalType === ModalType.BindLayers,
+    },
+    {
+      icon: OpenSeaLogo,
+      text: "Buy layers",
+      isDisabled: Date.now() / 1000 < chainConfig.saleStartTimestamp,
     },
   ];
 

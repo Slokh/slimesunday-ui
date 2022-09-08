@@ -87,13 +87,16 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     chain && chain.id in CHAIN_CONFIG
       ? CHAIN_CONFIG[chain.id]
       : {
-          blockExplorer: "",
+          blockExplorerUrl: "",
+          openseaUrl: "",
           contractAddress: "",
           metadataContractAddress: "",
           allowlistMintPrice: BigNumber.from(0),
           publicMintPrice: BigNumber.from(0),
-          saleStartTimestamp: 0,
-          signatureEndTimestamp: 0,
+          saleStartTimestamp: 10000000000000,
+          signatureEndTimestamp: 10000000000000,
+          allowlist: [],
+          mintingDisabled: false,
         };
 
   const contract: ethers.Contract = useContract({
@@ -353,7 +356,8 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     const allAvailableLayers = layersForType(availableLayers, LayerType.Layer);
     const dedupedAvailableLayers = allAvailableLayers.filter(
       (l, i) =>
-        allAvailableLayers.findIndex((m) => m.layerId === l.layerId) === i
+        allAvailableLayers.findIndex((m) => m.layerId === l.layerId) === i &&
+        l.layerId != -1
     );
     const newLayers = r(dedupedAvailableLayers, 5);
     const portraitIndex = Math.floor(Math.random() * newLayers.length);

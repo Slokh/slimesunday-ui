@@ -33,17 +33,21 @@ export const Display = ({
       >
         {background && (
           <Box position="absolute">
-            <Image src={background.image} alt={background.name} />
+            <Image
+              src={background.image}
+              alt={background.name}
+              userSelect="none"
+            />
           </Box>
         )}
         {portrait && (
           <Box position="absolute">
-            <Image src={portrait.image} alt={portrait.name} />
+            <Image src={portrait.image} alt={portrait.name} userSelect="none" />
           </Box>
         )}
         {displayLayers.map((layer: any, i) => (
           <Box key={i} position="absolute">
-            <Image src={layer.image} alt={layer.name} />
+            <Image src={layer.image} alt={layer.name} userSelect="none" />
           </Box>
         ))}
       </Flex>

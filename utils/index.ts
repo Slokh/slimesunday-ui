@@ -1,7 +1,6 @@
 import { BigNumber } from "ethers";
-
-export const GALLERY_LINK =
-  "https://testnets.opensea.io/collection/slimeshop-bind";
+import { mainnetAllowlist } from "./allowlist_mainnet";
+import { rinkebyAllowlist } from "./allowlist_rinkeby";
 
 export const ABI = [
   "function mintSet() public payable",
@@ -21,34 +20,43 @@ export const ABI = [
 ];
 
 export interface ChainConfig {
-  blockExplorer: string;
+  blockExplorerUrl: string;
+  openseaUrl: string;
   contractAddress: string;
   metadataContractAddress: string;
   publicMintPrice: BigNumber;
   allowlistMintPrice: BigNumber;
   saleStartTimestamp: number;
   signatureEndTimestamp: number;
+  allowlist: string[];
+  mintingDisabled: boolean;
 }
 
 export const CHAIN_CONFIG: {
   [key: number]: ChainConfig;
 } = {
   1: {
-    blockExplorer: "https://etherscan.io",
+    blockExplorerUrl: "https://etherscan.io",
+    openseaUrl: "https://opensea.io",
     contractAddress: "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e",
     metadataContractAddress: "0xaff53666eb1906576c3812dd8b05851677c1f32a",
     publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
     saleStartTimestamp: 1663264800,
     signatureEndTimestamp: 1663264800,
+    allowlist: mainnetAllowlist,
+    mintingDisabled: false,
   },
   4: {
-    blockExplorer: "https://rinkeby.etherscan.io",
-    contractAddress: "0x60Ee992dD2Fa9b6FC35E7895c3322370d052963e",
-    metadataContractAddress: "0xaff53666eb1906576c3812dd8b05851677c1f32a",
-    publicMintPrice: BigNumber.from("0"),
+    blockExplorerUrl: "https://rinkeby.etherscan.io",
+    openseaUrl: "https://testnets.opensea.io",
+    contractAddress: "0x0729aea2abcd275a051926290597112b9a6640b6",
+    metadataContractAddress: "0x2f71c0180a94549a222cf5c4fe69ecbe91abdfd3",
+    publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
-    saleStartTimestamp: 0,
-    signatureEndTimestamp: 0,
+    saleStartTimestamp: 1662632144,
+    signatureEndTimestamp: 1662646544,
+    allowlist: rinkebyAllowlist,
+    mintingDisabled: false,
   },
 };

@@ -1,7 +1,6 @@
 import { MerkleTree } from "merkletreejs";
 import { BigNumber, ethers } from "ethers";
 import { keccak256 } from "@ethersproject/keccak256";
-import { lite } from "./allowlist_data";
 import { ChainConfig } from ".";
 
 interface ILeaf {
@@ -19,7 +18,7 @@ export function findBestLeafForAddress(
   leaf?: ILeaf;
   proof?: string[];
 } {
-  const liteLeaves: string[] = lite;
+  const liteLeaves: string[] = chainConfig.allowlist;
   let leaves: ILeaf[] = [];
   for (let leaf of liteLeaves) {
     leaves.push({

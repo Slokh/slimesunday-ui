@@ -13,7 +13,6 @@ import { ModalType } from "./Modal";
 import { EditorLayers } from "./EditorLayers";
 import { DefaultRow, EditorRow, EditorRowAction, ModalRow } from "./EditorRow";
 import { FAQ, OpenSeaLogo } from "./Menu";
-import { GALLERY_LINK } from "@slimesunday/utils";
 
 const EditorStep = ({
   number,
@@ -50,8 +49,10 @@ export const Editor = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     active: { background, portrait, layers },
+    layers: availableLayers,
     shuffle,
     clear,
+    chainConfig,
     isBackgroundsEnabled,
     isPortraitsEnabled,
     isLayersEnabled,
@@ -82,7 +83,27 @@ export const Editor = () => {
           borderColor="secondary"
           divider={<StackDivider />}
         >
-          <ModalRow modalType={ModalType.MintPacks}>Mint</ModalRow>
+          {chainConfig.mintingDisabled ? (
+            <DefaultRow>
+              <Link
+                href={`${chainConfig.openseaUrl}/collection/slimeshop-layers`}
+                _hover={{}}
+                isExternal
+              >
+                <Flex align="center">
+                  <OpenSeaLogo pr={1} boxSize={5} />
+                  Buy Layers
+                </Flex>
+              </Link>
+            </DefaultRow>
+          ) : (
+            <ModalRow
+              modalType={ModalType.MintPacks}
+              isDisabled={Date.now() / 1000 < chainConfig.saleStartTimestamp}
+            >
+              Mint
+            </ModalRow>
+          )}
           <ModalRow
             modalType={ModalType.Wallet}
             isDisabled={!isExistingEnabled}
@@ -130,7 +151,7 @@ export const Editor = () => {
         </EditorStep>
         <EditorStep
           number={3}
-          title="Rearrange Layers"
+          title="Select Layers"
           placeholder={
             <ModalRow
               modalType={ModalType.Layers}
@@ -152,7 +173,14 @@ export const Editor = () => {
         borderColor="secondary"
         divider={<StackDivider />}
       >
-        <DefaultRow onClick={() => shuffle(true)}>SHUFFLE ALL</DefaultRow>
+        <DefaultRow
+          onClick={() => shuffle(true)}
+          isDisabled={
+            availableLayers.filter((l) => l.layerId !== -1).length === 0
+          }
+        >
+          SHUFFLE ALL
+        </DefaultRow>
         <DefaultRow
           onClick={() => shuffle(false)}
           isDisabled={!isLayersEnabled}
@@ -170,7 +198,7 @@ export const Editor = () => {
       >
         <DefaultRow
           onClick={clear}
-          isDisabled={!background && !portrait && !layers}
+          isDisabled={!background && !portrait && !layers?.length}
         >
           CLEAR
         </DefaultRow>
@@ -191,7 +219,11 @@ export const Editor = () => {
       >
         <DefaultRow onClick={onOpen}>FAQ</DefaultRow>
         <DefaultRow>
-          <Link href={GALLERY_LINK} _hover={{}} isExternal>
+          <Link
+            href={`${chainConfig.openseaUrl}/collection/slimeshop-bind`}
+            _hover={{}}
+            isExternal
+          >
             <Flex align="center">
               <OpenSeaLogo pr={1} boxSize={5} />
               GALLERY

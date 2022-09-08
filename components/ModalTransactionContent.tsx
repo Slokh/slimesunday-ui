@@ -178,17 +178,21 @@ export const BindLayersContent = () => {
 };
 
 const TransactionToast = ({
-  blockExplorer,
+  blockExplorerUrl,
   transactionHash,
   message,
   isLoading,
 }: {
-  blockExplorer: string;
+  blockExplorerUrl: string;
   transactionHash: string;
   message: string;
   isLoading?: boolean;
 }) => (
-  <Link href={`${blockExplorer}/tx/${transactionHash}`} isExternal _hover={{}}>
+  <Link
+    href={`${blockExplorerUrl}/tx/${transactionHash}`}
+    isExternal
+    _hover={{}}
+  >
     <Flex
       bgColor="primary"
       p={3}
@@ -244,7 +248,7 @@ export const TransactionContent = ({
         duration: null,
         render: () => (
           <TransactionToast
-            blockExplorer={chainConfig.blockExplorer}
+            blockExplorerUrl={chainConfig.blockExplorerUrl}
             transactionHash={contractWrite.data?.hash || ""}
             message="Waiting for transaction..."
             isLoading
@@ -270,7 +274,7 @@ export const TransactionContent = ({
         duration: 5000,
         render: () => (
           <TransactionToast
-            blockExplorer={chainConfig.blockExplorer}
+            blockExplorerUrl={chainConfig.blockExplorerUrl}
             transactionHash={contractWrite.data?.hash || ""}
             message="Transaction successful"
           />
@@ -287,7 +291,7 @@ export const TransactionContent = ({
       duration: null,
       render: () => (
         <TransactionToast
-          blockExplorer={chainConfig.blockExplorer}
+          blockExplorerUrl={chainConfig.blockExplorerUrl}
           transactionHash={contractWrite.data?.hash || ""}
           message="Waiting for transaction..."
           isLoading
