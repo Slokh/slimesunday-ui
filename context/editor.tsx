@@ -197,7 +197,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       layerType,
       isBound,
       isHidden: isHidden && layerType != LayerType.Portrait,
-      image: `https://opensea-slimesunday.s3.amazonaws.com/alllayers/${layerId}`,
+      image: `https://opensea-slimesunday.s3.amazonaws.com/alllayers/${layerId}.png`,
     };
   };
 
