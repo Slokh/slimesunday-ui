@@ -289,24 +289,44 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     const transfersIn = await contract.queryFilter(
       contract.filters.Transfer(null, address)
     );
-    const tokenIdsIn = transfersIn.map(({ topics }) => parseInt(topics[3]));
-
     const transfersOut = await contract.queryFilter(
       contract.filters.Transfer(address, null)
     );
-    const tokenIdsOut = transfersOut.map(({ topics }) => parseInt(topics[3]));
-
     const bindEvents = await contract.queryFilter(
       contract.filters.LayersBoundToToken(address)
     );
     const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[2]));
 
-    const ownedBoundTokenIds = boundTokenIds.filter(
-      (id) => tokenIdsIn.includes(id) && !tokenIdsOut.includes(id)
-    );
-    const ownedTokenIds = tokenIdsIn.filter(
-      (id) => !tokenIdsOut.includes(id) && !ownedBoundTokenIds.includes(id)
-    );
+    const transferEvents = [
+      ...transfersIn.map(({ blockNumber, topics }) => ({
+        blockNumber,
+        tokenId: parseInt(topics[3]),
+        transferIn: true,
+      })),
+      ...transfersOut.map(({ blockNumber, topics }) => ({
+        blockNumber,
+        tokenId: parseInt(topics[3]),
+        transferIn: false,
+      })),
+    ].sort((a, b) => a.blockNumber - b.blockNumber);
+
+    let ownedTokenIds: number[] = [];
+    let ownedBoundTokenIds: number[] = [];
+
+    for (const { tokenId, transferIn } of transferEvents) {
+      if (transferIn) {
+        if (boundTokenIds.includes(tokenId)) {
+          ownedBoundTokenIds.push(tokenId);
+        } else {
+          ownedTokenIds.push(tokenId);
+        }
+      } else {
+        ownedTokenIds = ownedTokenIds.filter((id) => id !== tokenId);
+        ownedBoundTokenIds = ownedBoundTokenIds.filter((id) => id !== tokenId);
+      }
+    }
+
+    console.log(ownedTokenIds, ownedBoundTokenIds);
 
     setLayers(
       await fetchUnboundLayers(
