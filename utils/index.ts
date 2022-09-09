@@ -52,7 +52,7 @@ export const CHAIN_CONFIG: {
     openseaUrl: "https://testnets.opensea.io",
     contractAddress: "0x964Ec3910B49ca98E7B451e876653CC32212b03E",
     metadataContractAddress: "0xff57fab3bb16203b4951502e6aa524b16fabca47",
-    publicMintPrice: BigNumber.from("100000000000000000"),
+    publicMintPrice: BigNumber.from("150000000000000000"),
     allowlistMintPrice: BigNumber.from("95000000000000000"),
     saleStartTimestamp: 0,
     signatureEndTimestamp: 1663264800,
