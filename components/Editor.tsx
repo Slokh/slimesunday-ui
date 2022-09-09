@@ -102,7 +102,7 @@ export const Editor = () => {
           {chainConfig.mintingDisabled ? (
             <DefaultRow>
               <Link
-                href={`${chainConfig.openseaUrl}/collection/slimeshop-layers`}
+                href={`https://opensea.io/collection/slimeshop-layers`}
                 _hover={{}}
                 isExternal
               >

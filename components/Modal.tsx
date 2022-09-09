@@ -62,7 +62,7 @@ const ModalOption = ({
         </Text>
       ) : (
         <Link
-          href={`${chainConfig.openseaUrl}/collection/slimeshop-layers`}
+          href={`https://opensea.io/collection/slimeshop-layers`}
           isExternal
           color={isDisabled ? "primarydark" : isActive ? "black" : "secondary"}
           pl={1}
