@@ -11,7 +11,7 @@ import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, provider } = configureChains(
-  [chain.mainnet],
+  [chain.mainnet, chain.rinkeby],
   [publicProvider()]
 );
 const { connectors } = getDefaultWallets({
