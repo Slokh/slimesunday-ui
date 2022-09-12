@@ -144,7 +144,7 @@ export const Menu = () => {
       <Text fontWeight="bold">SLIMESHOP</Text>
       <Flex align="center">
         <Text fontWeight="bold" textAlign="end" whiteSpace="nowrap">
-          {`${status}`}
+          {`DAYS LEFT TO EARN 1/1 LAYER - ${status}`}
         </Text>
       </Flex>
     </Flex>
