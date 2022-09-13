@@ -52,7 +52,7 @@ export const MintPacksContent = () => {
       }
       value={
         isAllowlisted
-          ? chainConfig.allowlistMintPrice.mul(numberOfPacks)
+          ? leaf.mintPrice.mul(numberOfPacks)
           : chainConfig.publicMintPrice.mul(numberOfPacks)
       }
       onSuccess={async () => {
@@ -71,7 +71,7 @@ export const MintPacksContent = () => {
         >
           <Flex fontSize="lg">{`${ethers.utils.formatEther(
             isAllowlisted
-              ? chainConfig.allowlistMintPrice.mul(numberOfPacks)
+              ? leaf.mintPrice.mul(numberOfPacks)
               : chainConfig.publicMintPrice.mul(numberOfPacks)
           )} ETH`}</Flex>
           <Flex>{`>`}</Flex>

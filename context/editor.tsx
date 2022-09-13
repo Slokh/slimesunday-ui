@@ -124,13 +124,22 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     setAllowlistData([undefined, undefined]);
     const fetchData = async () => {
       if (address && contract) {
-        const minted = await contract.getNumberMintedForAddress(address);
+        const minted: BigNumber = await contract.getNumberMintedForAddress(
+          address
+        );
+        const numSetsMinted: BigNumber = minted.div(7);
         const { leaf, proof } = findBestLeafForAddress(
           chainConfig,
           address,
-          minted.div(7)
+          numSetsMinted
         );
-        setAllowlistData([leaf, proof, 5 - minted.div(7)]);
+        let remainingSets: BigNumber;
+        if (leaf) {
+          remainingSets = leaf.maxMintedSetsForWallet.sub(numSetsMinted);
+        } else {
+          remainingSets = BigNumber.from(0);
+        }
+        setAllowlistData([leaf, proof, remainingSets]);
       }
     };
     fetchData();
