@@ -96,6 +96,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
           saleStartTimestamp: 0,
           signatureEndTimestamp: 10000000000000,
           allowlist: [],
+          giftlist: [],
           mintingDisabled: false,
         };
 
