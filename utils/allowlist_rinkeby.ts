@@ -3096,3 +3096,5 @@ export const rinkebyAllowlist = [
   "0xc126ebc835fbe29b5f346158138b5663d6f5e307",
   "0x55a1fdefc6f7b376ec38143a86b73072face7904",
 ];
+
+export const rinkebyGiftlist = []

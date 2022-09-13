@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
-import { mainnetAllowlist } from "./allowlist_mainnet";
-import { rinkebyAllowlist } from "./allowlist_rinkeby";
+import { mainnetAllowlist, mainnetGiftlist } from "./allowlist_mainnet";
+import { rinkebyAllowlist, rinkebyGiftlist } from "./allowlist_rinkeby";
 
 export const ABI = [
   "function mintSet() public payable",
@@ -29,6 +29,7 @@ export interface ChainConfig {
   saleStartTimestamp: number;
   signatureEndTimestamp: number;
   allowlist: string[];
+  giftlist: string[];
   mintingDisabled: boolean;
 }
 
@@ -45,6 +46,7 @@ export const CHAIN_CONFIG: {
     saleStartTimestamp: 1662660000,
     signatureEndTimestamp: 1663264800,
     allowlist: mainnetAllowlist,
+    giftlist: mainnetGiftlist,
     mintingDisabled: false,
   },
   4: {
@@ -57,6 +59,7 @@ export const CHAIN_CONFIG: {
     saleStartTimestamp: 0,
     signatureEndTimestamp: 0,
     allowlist: rinkebyAllowlist,
+    giftlist: rinkebyGiftlist,
     mintingDisabled: false,
   },
 };

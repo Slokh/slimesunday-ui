@@ -34,6 +34,15 @@ export function findBestLeafForAddress(
       startTime: BigNumber.from(chainConfig.saleStartTimestamp),
     });
   }
+  const giftLeaves: string[] = chainConfig.giftlist;
+  for (let leaf of giftLeaves) {
+    leaves.push({
+      address: leaf.toLowerCase(),
+      mintPrice: BigNumber.from(0),
+      maxMintedSetsForWallet: BigNumber.from(1),
+      startTime: BigNumber.from(chainConfig.saleStartTimestamp),
+    });
+  }
 
   function hashLeaf(leaf: ILeaf) {
     // equiv to keccak(abi.encodePacked(address,mintPrice,maxMintedSetsForWallet,startTime))
