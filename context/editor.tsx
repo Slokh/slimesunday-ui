@@ -299,10 +299,6 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
     const transfersOut = await contract.queryFilter(
       contract.filters.Transfer(address, null)
     );
-    const bindEvents = await contract.queryFilter(
-      contract.filters.LayersBoundToToken(address)
-    );
-    const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[2]));
 
     const transferEvents = [
       ...transfersIn.map(({ blockNumber, topics }) => ({
@@ -316,6 +312,16 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         transferIn: false,
       })),
     ].sort((a, b) => a.blockNumber - b.blockNumber);
+
+    // get IDs of just incoming portraits to filter bound events
+    const portraitTokenIds = transferEvents
+      .filter((x) => x.transferIn && x.tokenId % 7 == 0)
+      .map((x) => x.tokenId);
+    // filter bound events on those IDs
+    const bindEvents = await contract.queryFilter(
+      contract.filters.LayersBoundToToken(null, portraitTokenIds)
+    );
+    const boundTokenIds = bindEvents.map(({ topics }) => parseInt(topics[2]));
 
     let ownedTokenIds: number[] = [];
     let ownedBoundTokenIds: number[] = [];
@@ -333,7 +339,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       }
     }
 
-    console.log(ownedTokenIds, ownedBoundTokenIds);
+    console.log(ownedTokenIds, ownedBoundTokenIds, boundTokenIds);
 
     setLayers(
       await fetchUnboundLayers(
