@@ -19,7 +19,7 @@ import { BigNumber, ethers } from "ethers";
 import { Interface } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 import { IoMdWarning } from "react-icons/io";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { Display } from "./Display";
 
 export const MintPacksContent = () => {
@@ -234,15 +234,17 @@ export const TransactionContent = ({
   const toast = useToast();
   const toastIdRef = React.useRef();
 
-  const contractWrite = useContractWrite({
-    addressOrName: chainConfig.contractAddress,
-    contractInterface: new Interface(ABI),
+  const {config, error} = usePrepareContractWrite({
+    address: chainConfig.contractAddress,
+    abi: ABI as string[],
     functionName,
     args,
     overrides: {
       value,
-    },
-  });
+    }
+  })
+  // @ts-ignore
+  const contractWrite = useContractWrite(config)
 
   useEffect(() => {
     if (contractWrite.data?.hash && toastIdRef.current) {
@@ -287,6 +289,7 @@ export const TransactionContent = ({
   }
 
   const submit = async () => {
+    // @ts-ignore
     await contractWrite.writeAsync();
     // @ts-ignore
     toastIdRef.current = toast({
