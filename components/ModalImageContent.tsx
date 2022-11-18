@@ -68,6 +68,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
       maxH="inherit"
       direction="column"
       bgColor="primary"
+      color="secondary"
       w={{ base: "full", md: 80 }}
       borderRightColor="secondary"
       borderRightWidth={1}
@@ -110,6 +111,7 @@ const ImageContent = ({ files, selectedFile, onClick, onDoubleClick }: any) => (
       direction="column"
       bgColor="secondary"
       justify="center"
+      color="secondary"
       align="center"
       w={{ base: "full", md: 72 }}
       borderBottomRightRadius={8}

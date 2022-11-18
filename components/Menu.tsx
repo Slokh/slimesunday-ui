@@ -142,11 +142,7 @@ export const Menu = () => {
     >
       <MacButtons />
       <Text fontWeight="bold">SLIMESHOP</Text>
-      <Flex align="center">
-        <Text fontWeight="bold" textAlign="end" whiteSpace="nowrap">
-          {`DAYS LEFT TO EARN 1/1 LAYER - ${status}`}
-        </Text>
-      </Flex>
+      <Flex align="center"></Flex>
     </Flex>
   );
 };

@@ -8,11 +8,11 @@ import "public/fonts/style.css";
 
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.rinkeby],
-  [publicProvider()]
+  [chain.mainnet],
+  [alchemyProvider({ apiKey: "IoEqGkS-STl6neit9iVlUsaaC_SDbGyd" })]
 );
 const { connectors } = getDefaultWallets({
   appName: "Slimeshop",

@@ -86,6 +86,7 @@ export const DefaultRow = ({
         align="center"
         bgColor="primary"
         transition="all 0.2s ease"
+        color="secondary"
         onClick={isDisabled ? () => {} : onClick}
         _hover={
           isDisabled

@@ -23,7 +23,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.1.0",
     "react-icons": "^4.4.0",
-    "wagmi": "^0.5.9"
+    "wagmi": "^0.8.0"
   },
   "devDependencies": {
     "@types/node": "17.0.39",

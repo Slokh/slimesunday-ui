@@ -100,14 +100,14 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
           mintingDisabled: false,
         };
 
-  const contract: ethers.Contract = useContract({
-    addressOrName: chainConfig.contractAddress,
-    contractInterface: ABI,
+  const contract = useContract({
+    address: chainConfig.contractAddress,
+    abi: ABI,
     signerOrProvider: provider,
   });
   const metadataContract = useContract({
-    addressOrName: chainConfig.metadataContractAddress,
-    contractInterface: ABI,
+    address: chainConfig.metadataContractAddress,
+    abi: ABI,
     signerOrProvider: provider,
   });
 
@@ -216,7 +216,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       tokenIds.map(async (tokenId: number) => {
         let layerId;
         try {
-          layerId = (await contract.getLayerId(tokenId)).toNumber();
+          layerId = (await contract?.getLayerId(tokenId)).toNumber();
         } catch (e) {
           layerId = -1;
         }
@@ -224,7 +224,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         return {
           tokenId,
           layerId,
-          jsonString: await contract.tokenURI(tokenId),
+          jsonString: await contract?.tokenURI(tokenId),
         };
       })
     );
@@ -234,10 +234,10 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   const fetchBoundLayers = async (tokenIds: number[]) => {
     return await Promise.all(
       tokenIds.map(async (tokenId: number) => {
-        const boundLayerIds = (await contract.getBoundLayers(tokenId)).map(
+        const boundLayerIds = (await contract?.getBoundLayers(tokenId)).map(
           (id: BigNumber) => id.toNumber()
         );
-        const activeLayerIds = (await contract.getActiveLayers(tokenId)).map(
+        const activeLayerIds = (await contract?.getActiveLayers(tokenId)).map(
           (id: BigNumber) => id.toNumber()
         );
         const inactiveLayerIds = boundLayerIds.filter(
@@ -250,7 +250,7 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
         ) => {
           let layers = [];
           for (const layerId of layerIds) {
-            const jsonString = await metadataContract.getTokenURI(
+            const jsonString = await metadataContract?.getTokenURI(
               tokenId,
               layerId,
               0,
@@ -293,6 +293,9 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
   };
 
   const fetchLayers = async () => {
+    if (!contract) {
+      return;
+    }
     const transfersIn = await contract.queryFilter(
       contract.filters.Transfer(null, address)
     );
@@ -457,6 +460,8 @@ export const EditorProvider = ({ children }: EditorProviderProps) => {
       );
     });
   };
+
+  console.log(layers);
 
   return (
     <EditorContext.Provider

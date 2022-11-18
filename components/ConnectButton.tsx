@@ -35,6 +35,7 @@ export const ConnectButton = () => {
                     w="full"
                     h={16}
                     justify="center"
+                    color="secondary"
                     align="center"
                     fontWeight="bold"
                     fontSize="md"

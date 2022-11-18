@@ -16,10 +16,13 @@ import {
 import { LayerType, useEditor } from "@slimesunday/context/editor";
 import { ABI } from "@slimesunday/utils";
 import { BigNumber, ethers } from "ethers";
-import { Interface } from "ethers/lib/utils";
 import React, { useEffect, useState } from "react";
 import { IoMdWarning } from "react-icons/io";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 import { Display } from "./Display";
 
 export const MintPacksContent = () => {
@@ -234,15 +237,17 @@ export const TransactionContent = ({
   const toast = useToast();
   const toastIdRef = React.useRef();
 
-  const contractWrite = useContractWrite({
-    addressOrName: chainConfig.contractAddress,
-    contractInterface: new Interface(ABI),
+  const { config } = usePrepareContractWrite({
+    address: chainConfig.contractAddress,
+    abi: ABI,
     functionName,
     args,
     overrides: {
       value,
     },
   });
+
+  const contractWrite = useContractWrite({ ...config });
 
   useEffect(() => {
     if (contractWrite.data?.hash && toastIdRef.current) {
@@ -287,6 +292,10 @@ export const TransactionContent = ({
   }
 
   const submit = async () => {
+    if (!contractWrite?.writeAsync) {
+      return;
+    }
+
     await contractWrite.writeAsync();
     // @ts-ignore
     toastIdRef.current = toast({
@@ -307,6 +316,7 @@ export const TransactionContent = ({
     <Flex
       w="full"
       direction="column"
+      color="secondary"
       justify="space-between"
       align="center"
       fontSize="lg"
